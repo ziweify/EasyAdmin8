@@ -20,6 +20,7 @@ class {{controllerName}} extends AdminController
         parent::__construct($app);
         $this->model = new {{modelFilename}}();
         $this->notes = $notes = $this->model->notes;
+        {{constructRelation}}
         $this->assign(compact('notes'));
     }
 

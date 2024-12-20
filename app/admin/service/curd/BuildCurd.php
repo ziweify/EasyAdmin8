@@ -1027,7 +1027,8 @@ class BuildCurd
      */
     protected function renderController(): static
     {
-        $controllerFile = "{$this->rootDir}app{$this->DS}admin{$this->DS}controller{$this->DS}{$this->controllerFilename}.php";
+        $controllerFile    = "{$this->rootDir}app{$this->DS}admin{$this->DS}controller{$this->DS}{$this->controllerFilename}.php";
+        $constructRelation = '';
         if (empty($this->relationArray)) {
             $controllerIndexMethod = '';
         }else {
@@ -1035,6 +1036,9 @@ class BuildCurd
             foreach ($this->relationArray as $key => $val) {
                 $relation     = CommonTool::lineToHump($key);
                 $relationCode = "->withJoin('{$relation}', 'LEFT')\r";
+                if (!empty($val['bindSelectField']) && !empty($val['primaryKey'])) {
+                    $constructRelation = '$notes["' . lcfirst($val['modelFilename']) . ucfirst($val['bindSelectField']) . '"] = \app\admin\model\\' . $val['modelFilename'] . '::column("' . $val['bindSelectField'] . '", "' . $val['primaryKey'] . '");';
+                }
             }
             $controllerIndexMethod = CommonTool::replaceTemplate(
                 $this->getTemplate("controller{$this->DS}indexMethod"),
@@ -1066,6 +1070,7 @@ class BuildCurd
                 'modelFilename'        => "\app\admin\model\\{$modelFilenameExtend}",
                 'indexMethod'          => $controllerIndexMethod,
                 'selectList'           => $selectList,
+                'constructRelation'    => $constructRelation,
             ]);
         $this->fileList[$controllerFile] = $controllerValue;
         return $this;
@@ -1095,14 +1100,10 @@ class BuildCurd
             }
         }
 
-        $selectList        = '';
-        $constructRelation = '';
+        $selectList = '';
         foreach ($this->relationArray as $relation) {
             if (!empty($relation['bindSelectField'])) {
                 $selectList .= $this->buildRelationSelectModel($relation['modelFilename'], $relation['bindSelectField']);
-            }
-            if (!empty($relation['bindSelectField']) && !empty($relation['primaryKey'])) {
-                $constructRelation = '$this->notes["' . lcfirst($relation['modelFilename']) . ucfirst($relation['bindSelectField']) . '"] = ' . $relation['modelFilename'] . '::column("' . $relation['bindSelectField'] . '", "' . $relation['primaryKey'] . '");';
             }
         }
         $selectArrays = [];
@@ -1120,15 +1121,14 @@ class BuildCurd
         $modelValue = CommonTool::replaceTemplate(
             $this->getTemplate("model{$this->DS}model"),
             [
-                'modelName'         => $this->modelName,
-                'modelNamespace'    => "app\admin\model{$extendNamespace}",
-                'prefix_table'      => $this->tablePrefix == config('database.connections.mysql.prefix') ? "" : $this->tablePrefix . $this->table,
-                'table'             => $this->table,
-                'deleteTime'        => $this->delete ? '"delete_time"' : 'false',
-                'relationList'      => $relationList,
+                'modelName'      => $this->modelName,
+                'modelNamespace' => "app\admin\model{$extendNamespace}",
+                'prefix_table'   => $this->tablePrefix == config('database.connections.mysql.prefix') ? "" : $this->tablePrefix . $this->table,
+                'table'          => $this->table,
+                'deleteTime'     => $this->delete ? '"delete_time"' : 'false',
+                'relationList'   => $relationList,
                 //                'selectList'     => $selectList,
-                'selectArrays'      => CommonTool::replaceArrayString(var_export($selectArrays, true)),
-                'constructRelation' => $constructRelation,
+                'selectArrays'   => CommonTool::replaceArrayString(var_export($selectArrays, true)),
             ]);
 
 
@@ -1157,15 +1157,14 @@ class BuildCurd
             $relationModelValue                 = CommonTool::replaceTemplate(
                 $this->getTemplate("model{$this->DS}model"),
                 [
-                    'modelName'         => $val['modelName'],
-                    'modelNamespace'    => "app\admin\model{$extendNamespace}",
-                    'prefix_table'      => $this->tablePrefix == config('database.connections.mysql.prefix') ? "" : $this->tablePrefix . $this->table,
-                    'table'             => $key,
-                    'deleteTime'        => $val['delete'] ? '"delete_time"' : 'false',
-                    'relationList'      => '',
-                    'selectList'        => '',
-                    'selectArrays'      => "[]",
-                    'constructRelation' => '',
+                    'modelName'      => $val['modelName'],
+                    'modelNamespace' => "app\admin\model{$extendNamespace}",
+                    'prefix_table'   => $this->tablePrefix == config('database.connections.mysql.prefix') ? "" : $this->tablePrefix . $this->table,
+                    'table'          => $key,
+                    'deleteTime'     => $val['delete'] ? '"delete_time"' : 'false',
+                    'relationList'   => '',
+                    'selectList'     => '',
+                    'selectArrays'   => "[]",
                 ]);
             $this->fileList[$relationModelFile] = $relationModelValue;
         }

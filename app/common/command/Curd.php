@@ -168,6 +168,12 @@ class Curd extends Command
                     }
                 }
             }
+            if (PHP_SAPI == 'cli') {
+                $output->info(">>>>>>>>>>>>>>>");
+                $output->info('执行成功');
+            }else {
+                $output->writeln('执行成功');
+            }
         }catch (\Exception $e) {
             if (PHP_SAPI == 'cli')
                 CliEcho::error($e->getMessage());
