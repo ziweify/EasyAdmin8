@@ -15,4 +15,11 @@ class {{modelName}} extends TimeModel
 
     public array $notes = {{selectArrays}};
 
+    public function __construct(object|array $data = [])
+    {
+        parent::__construct($data);
+
+        {{constructRelation}}
+    }
+
 }
