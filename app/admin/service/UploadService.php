@@ -4,6 +4,7 @@ namespace app\admin\service;
 
 use app\admin\model\SystemUploadfile;
 use OSS\Core\OssException;
+use OSS\Credentials\EnvironmentVariableCredentialsProvider;
 use OSS\OssClient;
 use think\facade\Env;
 use think\file\UploadedFile;
@@ -112,10 +113,21 @@ class UploadService
         $accessKeySecret = $config['oss_access_key_secret'];
         $endpoint        = $config['oss_endpoint'];
         $bucket          = $config['oss_bucket'];
+        // 升级 aliyuncs/oss-sdk-php 到 v2.7.2 以上, 使用签名 v4 版本
+        putenv('OSS_ACCESS_KEY_ID=' . $accessKeyId);
+        putenv('OSS_ACCESS_KEY_SECRET=' . $accessKeySecret);
+        $region   = str_replace(['http://oss-', 'https://oss-', 'oss-'], '', explode('.aliyuncs.com', $endpoint)[0] ?? '');
+        $provider = new EnvironmentVariableCredentialsProvider();
+        $args     = [
+            "provider"         => $provider,
+            "endpoint"         => $endpoint,
+            "signatureVersion" => OssClient::OSS_SIGNATURE_VERSION_V4,
+            "region"           => $region
+        ];
         if ($file->isValid()) {
             $object = $this->setFilePath($file, Env::get('EASYADMIN.OSS_STATIC_PREFIX', 'easyadmin8') . '/');
             try {
-                $ossClient       = new OssClient($accessKeyId, $accessKeySecret, $endpoint);
+                $ossClient       = new OssClient($args);
                 $_rs             = $ossClient->putObject($bucket, $object, file_get_contents($file->getRealPath()));
                 $oss_request_url = $_rs['oss-request-url'] ?? '';
                 if (empty($oss_request_url)) return ['code' => 0, 'data' => '上传至OSS失败'];
@@ -164,7 +176,7 @@ class UploadService
                 if (empty($location)) return ['code' => 0, 'data' => '上传至COS失败'];
                 $location = 'https://' . $location;
                 $this->setSaveData($file);
-            } catch (Exception $e) {
+            }catch (Exception $e) {
                 return ['code' => 0, 'data' => $e->getMessage()];
             }
             $data = ['url' => $location];
