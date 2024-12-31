@@ -5,6 +5,7 @@
                data-auth-edit="{:auth('{{controllerUrl}}/edit')}"
                data-auth-delete="{:auth('{{controllerUrl}}/delete')}"
                lay-filter="currentTable">
+               <!-- searchTableShow="false" 隐藏搜索框 -->
         </table>
     </div>
 </div>
