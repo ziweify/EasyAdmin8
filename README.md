@@ -2,7 +2,7 @@
 <img alt="log" src="/public/static/common/images/logo-8.png" />
 
 <p>
-<img src="https://img.shields.io/badge/php-%3E=8.0.0-brightgreen.svg?style=for-the-badge&logo=php&colorB=ff69b4" alt="php">
+<img src="https://img.shields.io/badge/php-%3E=8.1.0-brightgreen.svg?style=for-the-badge&logo=php&colorB=ff69b4" alt="php">
 <img src="https://img.shields.io/badge/mysql-%3E=5.7-brightgreen.svg?style=for-the-badge&logo=mysql&colorB=blue" alt="MySQL">
 <img src="https://img.shields.io/badge/thinkphp-%3E=8.0.0-brightgreen.svg?style=for-the-badge&logo=thinkphp" alt="ThinkPHP">
 <img src="https://img.shields.io/badge/layui-%3E=2.9.0-brightgreen.svg?style=for-the-badge&logo=layui&colorB=orange" alt="layui">
@@ -21,9 +21,11 @@
 
 ## 项目介绍
 
-> `EasyAdmin8` 在 [`EasyAdmin`](https://gitee.com/zhongshaofa/easyadmin) 的基础上更新 ThinkPHP 框架到 8.0 ，PHP 最低版本要求不低于 8.0
+> `EasyAdmin8` 在 [`EasyAdmin`](https://gitee.com/zhongshaofa/easyadmin) 的基础上更新 ThinkPHP 框架到 8.0+ ，PHP 最低版本要求不低于 8.1
+> 
+> 2025年起 `PHP` 版本要求提升到 `8.1+`, 如果需要 `8.0` 到分支 `v8.0` 中下载
 >
-> ThinkPHP v8.0 和 Layui v2.9.x 的快速开发的后台管理系统。
+> ThinkPHP v8.0+ 和 Layui v2.9.x 的快速开发的后台管理系统。
 >
 > 项目地址：[http://easyadmin8.top](http://easyadmin8.top)
 >
@@ -58,7 +60,7 @@ if [ -f /usr/bin/curl ];then curl -sSO https://easyadmin8.top/auto-install-EasyA
 
   git clone https://gitee.com/EasyAdmin8/EasyAdmin8
 
-2.安装依赖包（确保 PHP 版本 >= 8.0）
+2.安装依赖包（确保 PHP 版本 >= 8.1）
 
   在根目录下 composer install ，如果有报错信息可以使用命令 composer install --ignore-platform-reqs
   
