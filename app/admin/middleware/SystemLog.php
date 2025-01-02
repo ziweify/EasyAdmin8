@@ -8,10 +8,7 @@ use app\admin\service\annotation\NodeAnnotation;
 use app\admin\service\SystemLogService;
 use app\common\traits\JumpTrait;
 use app\Request;
-use ReflectionClass;
 use Closure;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\DocParser;
 use ReflectionException;
 
 class SystemLog
@@ -67,19 +64,18 @@ class SystemLog
                             $_ignore    = (array)$annotation->ignore;
                             if (in_array('log', array_map('strtolower', $_ignore))) return $response;
                         }
-
-                        // 支持旧写法
-                        $reflectionClass = new \ReflectionClass($className);
-                        $properties      = $reflectionClass->getDefaultProperties();
-                        $ignoreLog       = $properties['ignoreLog'] ?? [];
-                        if (in_array($_action, $ignoreLog)) return $response;
-                        $parser = new DocParser();
-                        $parser->setIgnoreNotImportedAnnotations(true);
-                        $reader               = new AnnotationReader($parser);
-                        $controllerAnnotation = $reader->getClassAnnotation($reflectionClass, ControllerAnnotation::class);
-                        $reflectionAction     = $reflectionClass->getMethod($_action);
-                        $nodeAnnotation       = $reader->getMethodAnnotation($reflectionAction, NodeAnnotation::class);
-                        $title                = $controllerAnnotation->title . ' - ' . $nodeAnnotation->title;
+                        $controllerTitle      = $nodeTitle = '';
+                        $controllerAttributes = (new \ReflectionClass($className))->getAttributes(ControllerAnnotation::class);
+                        $actionAttributes     = $reflectionMethod->getAttributes(NodeAnnotation::class);
+                        foreach ($controllerAttributes as $controllerAttribute) {
+                            $controllerAnnotation = $controllerAttribute->newInstance();
+                            $controllerTitle      = $controllerAnnotation->title ?? '';
+                        }
+                        foreach ($actionAttributes as $actionAttribute) {
+                            $actionAnnotation = $actionAttribute->newInstance();
+                            $nodeTitle        = $actionAnnotation->title ?? '';
+                        }
+                        $title = $controllerTitle . ' - ' . $nodeTitle;
                     }
                 }catch (\Throwable $exception) {
                 }
