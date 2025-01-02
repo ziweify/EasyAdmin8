@@ -75,7 +75,7 @@ class Node
                         $actionList[] = [
                             'node'    => $controllerFormat . '/' . $method->name,
                             'title'   => $annotation->title ?? null,
-                            'is_auth' => $annotation->auth ?? null,
+                            'is_auth' => $annotation->auth ?? false,
                             'type'    => 2,
                         ];
                     }
