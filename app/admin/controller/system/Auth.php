@@ -11,11 +11,7 @@ use app\admin\service\annotation\NodeAnnotation;
 use app\Request;
 use think\App;
 
-/**
- * @ControllerAnnotation(title="角色权限管理")
- * Class Auth
- * @package app\admin\controller\system
- */
+#[ControllerAnnotation(title: '角色权限管理', auth: true)]
 class Auth extends AdminController
 {
 
@@ -30,9 +26,7 @@ class Auth extends AdminController
         $this->model = new SystemAuth();
     }
 
-    /**
-     * @NodeAnnotation(title="授权")
-     */
+    #[NodeAnnotation(title: '授权', auth: true)]
     public function authorize(Request $request, $id): string
     {
         $row = $this->model->find($id);
@@ -45,9 +39,7 @@ class Auth extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="授权保存")
-     */
+    #[NodeAnnotation(title: '授权保存', auth: true)]
     public function saveAuthorize(Request $request): void
     {
         $this->checkPostRequest();

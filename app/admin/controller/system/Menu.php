@@ -11,14 +11,9 @@ use app\admin\service\annotation\NodeAnnotation;
 use app\common\controller\AdminController;
 use app\Request;
 use think\App;
-use think\db\exception\DbException;
 use think\response\Json;
 
-/**
- * Class Menu
- * @package app\admin\controller\system
- * @ControllerAnnotation(title="菜单管理",auth=true)
- */
+#[ControllerAnnotation(title: '菜单管理')]
 class Menu extends AdminController
 {
 
@@ -33,10 +28,7 @@ class Menu extends AdminController
         $this->model = new SystemMenu();
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     * @throws DbException
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
@@ -56,9 +48,7 @@ class Menu extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): string
     {
         $id     = $request->param('id');
@@ -92,9 +82,7 @@ class Menu extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request, $id = 0): string
     {
         $row = $this->model->find($id);
@@ -129,9 +117,7 @@ class Menu extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="删除")
-     */
+    #[NodeAnnotation(title: '删除', auth: true)]
     public function delete(Request $request): void
     {
         $this->checkPostRequest();
@@ -151,9 +137,7 @@ class Menu extends AdminController
         }
     }
 
-    /**
-     * @NodeAnnotation(title="属性修改")
-     */
+    #[NodeAnnotation(title: '属性修改', auth: true)]
     public function modify(Request $request): void
     {
         $this->checkPostRequest();
@@ -190,9 +174,7 @@ class Menu extends AdminController
         $this->success('保存成功');
     }
 
-    /**
-     * @NodeAnnotation(title="添加菜单提示")
-     */
+    #[NodeAnnotation(title: '添加菜单提示', auth: true)]
     public function getMenuTips(): Json
     {
         $node = input('get.keywords');

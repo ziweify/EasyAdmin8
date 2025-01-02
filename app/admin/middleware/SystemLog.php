@@ -3,6 +3,7 @@
 namespace app\admin\middleware;
 
 use app\admin\service\annotation\ControllerAnnotation;
+use app\admin\service\annotation\MiddlewareAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use app\admin\service\SystemLogService;
 use app\common\traits\JumpTrait;
@@ -59,6 +60,15 @@ class SystemLog
                     $_controller = ucfirst($pathInfoExp[1] ?? '');
                     $className   = $_controller ? "app\admin\controller\\{$_name}\\{$_controller}" : "app\admin\controller\\{$_name}";
                     if ($_name && $_action) {
+                        $reflectionMethod = new \ReflectionMethod($className, $_action);
+                        $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
+                        foreach ($attributes as $attribute) {
+                            $annotation = $attribute->newInstance();
+                            $_ignore    = (array)$annotation->ignore;
+                            if (in_array('log', array_map('strtolower', $_ignore))) return $response;
+                        }
+
+                        // 支持旧写法
                         $reflectionClass = new \ReflectionClass($className);
                         $properties      = $reflectionClass->getDefaultProperties();
                         $ignoreLog       = $properties['ignoreLog'] ?? [];

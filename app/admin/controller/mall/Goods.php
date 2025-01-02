@@ -9,14 +9,9 @@ use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use app\Request;
 use think\App;
-use think\db\exception\DbException;
 use think\response\Json;
 
-/**
- * Class Goods
- * @package app\admin\controller\mall
- * @ControllerAnnotation(title="商城商品管理")
- */
+#[ControllerAnnotation(title: '商城商品管理')]
 class Goods extends AdminController
 {
 
@@ -33,10 +28,7 @@ class Goods extends AdminController
         $this->assign('cate', (new MallCate())->column('title', 'id'));
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     * @throws DbException
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
@@ -55,9 +47,7 @@ class Goods extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="入库")
-     */
+    #[NodeAnnotation(title: '入库', auth: true)]
     public function stock(Request $request, $id): string
     {
         $row = $this->model->find($id);

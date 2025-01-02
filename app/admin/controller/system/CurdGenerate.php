@@ -3,7 +3,6 @@
 namespace app\admin\controller\system;
 
 use app\admin\service\curd\BuildCurd;
-use app\admin\service\curd\exceptions\TableException;
 use app\common\controller\AdminController;
 use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
@@ -15,24 +14,16 @@ use think\facade\Db;
 use think\helper\Str;
 use think\response\Json;
 
-/**
- * @ControllerAnnotation(title="CURD可视化管理")
- * @package app\admin\controller\system
- */
+#[ControllerAnnotation(title: 'CURD可视化管理')]
 class CurdGenerate extends AdminController
 {
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="操作")
-     * @throws TableException
-     */
+    #[NodeAnnotation(title: '操作', auth: true)]
     public function save(Request $request, string $type = ''): ?Json
     {
         if (!$request->isAjax()) $this->error();

@@ -8,11 +8,7 @@ use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use think\App;
 
-/**
- * Class Admin
- * @package app\admin\controller\system
- * @ControllerAnnotation(title="商品分类管理")
- */
+#[ControllerAnnotation(title: '商品分类管理')]
 class Cate extends AdminController
 {
 

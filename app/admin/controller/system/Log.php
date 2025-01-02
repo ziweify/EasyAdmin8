@@ -3,6 +3,7 @@
 namespace app\admin\controller\system;
 
 use app\admin\model\SystemLog;
+use app\admin\service\annotation\MiddlewareAnnotation;
 use app\admin\service\tool\CommonTool;
 use app\common\controller\AdminController;
 use app\admin\service\annotation\ControllerAnnotation;
@@ -15,24 +16,16 @@ use think\db\exception\PDOException;
 use think\facade\Db;
 use think\response\Json;
 
-/**
- * @ControllerAnnotation(title="操作日志管理")
- * Class Auth
- * @package app\admin\controller\system
- */
+#[ControllerAnnotation(title: '操作日志管理')]
 class Log extends AdminController
 {
-    protected array $ignoreLog = ['record'];
-
     public function __construct(App $app)
     {
         parent::__construct($app);
         $this->model = new SystemLog();
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
@@ -60,9 +53,7 @@ class Log extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="导出")
-     */
+    #[NodeAnnotation(title: '导出', auth: true)]
     public function export(): bool
     {
         if (env('EASYADMIN.IS_DEMO', false)) {
@@ -96,9 +87,8 @@ class Log extends AdminController
         return Excel::exportData($list, $header, $fileName, 'xlsx');
     }
 
-    /**
-     * @NodeAnnotation(title="框架日志")
-     */
+    #[MiddlewareAnnotation(ignore: MiddlewareAnnotation::IGNORE_LOG)]
+    #[NodeAnnotation(title: '框架日志', auth: true, ignore: NodeAnnotation::IGNORE_NODE)]
     public function record(): Json|string
     {
         return (new \Wolfcode\PhpLogviewer\thinkphp\LogViewer())->fetch();

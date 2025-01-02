@@ -10,14 +10,9 @@ use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use app\Request;
 use think\App;
-use think\db\exception\DbException;
 use think\response\Json;
 
-/**
- * Class Admin
- * @package app\admin\controller\system
- * @ControllerAnnotation(title="管理员管理")
- */
+#[ControllerAnnotation(title: '管理员管理')]
 class Admin extends AdminController
 {
 
@@ -33,10 +28,7 @@ class Admin extends AdminController
         $this->assign('auth_list', $this->model->getAuthList());
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     * @throws DbException
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
@@ -64,9 +56,7 @@ class Admin extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): string
     {
         if ($request->isPost()) {
@@ -87,9 +77,7 @@ class Admin extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request, $id = 0): string
     {
         $row = $this->model->find($id);
@@ -116,9 +104,7 @@ class Admin extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '设置密码', auth: true)]
     public function password(Request $request, $id): string
     {
         $row = $this->model->find($id);
@@ -147,9 +133,7 @@ class Admin extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="删除")
-     */
+    #[NodeAnnotation(title: '删除', auth: true)]
     public function delete(Request $request): void
     {
         $this->checkPostRequest();
@@ -170,9 +154,7 @@ class Admin extends AdminController
         $save ? $this->success('删除成功') : $this->error('删除失败');
     }
 
-    /**
-     * @NodeAnnotation(title="属性修改")
-     */
+    #[NodeAnnotation(title: '属性修改', auth: true)]
     public function modify(Request $request): void
     {
         $this->checkPostRequest();

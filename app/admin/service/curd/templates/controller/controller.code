@@ -7,9 +7,7 @@ use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use think\App;
 
-/**
- * @ControllerAnnotation(title="{{controllerAnnotation}}")
- */
+#[ControllerAnnotation(title: '{{controllerAnnotation}}')]
 class {{controllerName}} extends AdminController
 {
 

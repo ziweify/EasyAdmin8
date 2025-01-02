@@ -10,14 +10,9 @@ use app\admin\service\annotation\NodeAnnotation;
 use app\admin\service\NodeService;
 use app\Request;
 use think\App;
-use think\db\exception\DbException;
 use think\response\Json;
 
-/**
- * @ControllerAnnotation(title="系统节点管理")
- * Class Node
- * @package app\admin\controller\system
- */
+#[ControllerAnnotation(title: '系统节点管理')]
 class Node extends AdminController
 {
 
@@ -27,10 +22,7 @@ class Node extends AdminController
         $this->model = new SystemNode();
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     * @throws DbException
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
@@ -52,9 +44,7 @@ class Node extends AdminController
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="系统节点更新")
-     */
+    #[NodeAnnotation(title: '系统节点更新', auth: true)]
     public function refreshNode($force = 0): void
     {
 
@@ -94,9 +84,7 @@ class Node extends AdminController
         $this->success('节点更新成功');
     }
 
-    /**
-     * @NodeAnnotation(title="清除失效节点")
-     */
+    #[NodeAnnotation(title: '清除失效节点', auth: true)]
     public function clearNode(): void
     {
         $this->checkPostRequest();

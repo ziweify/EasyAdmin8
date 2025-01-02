@@ -30,15 +30,15 @@
         "aliyuncs/oss-sdk-php": "^2.6",
         "qcloud/cos-sdk-v5": "^2.6",
         "jianyan74/php-excel": "^1.0.2",
-        "doctrine/annotations": "^1.13",
+        "doctrine/annotations": "^2.0.0",
         "phpoffice/phpspreadsheet": "^1.28",
         "myclabs/php-enum": "^1.8",
-        "ext-json": "*",
-        "qiniu/php-sdk": "v7.11.0",
-        "ext-mysqli": "*",
-        "ext-pdo": "*",
+        "qiniu/php-sdk": "^7.11.0",
         "wolf-leo/phplogviewer": "^0.11.3",
-        "wolfcode/authenticator": "^0.0.6"
+        "wolfcode/authenticator": "^0.0.6",
+        "ext-json": "*",
+        "ext-mysqli": "*",
+        "ext-pdo": "*"
     },
     "require-dev": {
         "symfony/var-dumper": ">=4.2",

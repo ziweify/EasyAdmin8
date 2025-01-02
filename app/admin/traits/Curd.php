@@ -17,9 +17,7 @@ use think\response\Json;
 trait Curd
 {
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
@@ -40,9 +38,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="添加")
-     */
+    #[NodeAnnotation(title: '添加', auth: true)]
     public function add(Request $request): string
     {
         if ($request->isPost()) {
@@ -61,9 +57,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="编辑")
-     */
+    #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request, $id = 0): string
     {
         $row = $this->model->find($id);
@@ -85,9 +79,7 @@ trait Curd
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="删除")
-     */
+    #[NodeAnnotation(title: '删除', auth: true)]
     public function delete(Request $request): void
     {
         // 如果不是id作为主键 请在对应的控制器中覆盖重写
@@ -103,9 +95,7 @@ trait Curd
         $save ? $this->success('删除成功') : $this->error('删除失败');
     }
 
-    /**
-     * @NodeAnnotation(title="导出")
-     */
+    #[NodeAnnotation(title: '导出', auth: true)]
     public function export()
     {
         if (env('EASYADMIN.IS_DEMO', false)) {
@@ -133,9 +123,7 @@ trait Curd
         return Excel::exportData($list, $header, $fileName, 'xlsx');
     }
 
-    /**
-     * @NodeAnnotation(title="属性修改")
-     */
+    #[NodeAnnotation(title: '属性修改', auth: true)]
     public function modify(Request $request): void
     {
         $this->checkPostRequest();

@@ -9,14 +9,9 @@ use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use app\Request;
 use think\App;
-use think\facade\Cache;
 use think\response\Json;
 
-/**
- * Class Config
- * @package app\admin\controller\system
- * @ControllerAnnotation(title="系统配置管理")
- */
+#[ControllerAnnotation(title: '系统配置管理')]
 class Config extends AdminController
 {
 
@@ -28,17 +23,13 @@ class Config extends AdminController
         $this->assign('editor_types', config('admin.editor_types'));
     }
 
-    /**
-     * @NodeAnnotation(title="列表")
-     */
+    #[NodeAnnotation(title: '列表', auth: true)]
     public function index(Request $request): Json|string
     {
         return $this->fetch();
     }
 
-    /**
-     * @NodeAnnotation(title="保存")
-     */
+    #[NodeAnnotation(title: '保存', auth: true)]
     public function save(Request $request): void
     {
         $this->checkPostRequest();

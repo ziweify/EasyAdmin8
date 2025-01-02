@@ -8,10 +8,7 @@ use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
 use think\App;
 
-/**
- * @ControllerAnnotation(title="上传文件管理")
- * @package app\admin\controller\system
- */
+#[ControllerAnnotation(title: '上传文件管理')]
 class Uploadfile extends AdminController
 {
 
