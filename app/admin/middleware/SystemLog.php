@@ -34,7 +34,8 @@ class SystemLog
     public function handle(Request $request, Closure $next)
     {
         $response = $next($request);
-        $params   = $request->param();
+        if (!env('APP_ADMIN_SYSTEM_LOG', true)) return $response;
+        $params = $request->param();
         if (isset($params['s'])) unset($params['s']);
         foreach ($params as $key => $val) {
             in_array($key, $this->sensitiveParams) && $params[$key] = "***********";
