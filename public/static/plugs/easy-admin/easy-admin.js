@@ -1,4 +1,4 @@
-define(["jquery", "tableSelect", "miniTheme"], function ($, tableSelect, miniTheme) {
+define(["jquery", "tableSelect", "miniTheme", "xmSelect"], function ($, tableSelect, miniTheme, xmSelect) {
 
     //切换日夜模式
     window.onInitElemStyle = function () {
