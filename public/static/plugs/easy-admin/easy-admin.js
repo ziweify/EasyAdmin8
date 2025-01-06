@@ -1,4 +1,15 @@
-define(["jquery", "tableSelect"], function ($, tableSelect) {
+define(["jquery", "tableSelect", "miniTheme"], function ($, tableSelect, miniTheme) {
+
+    //切换日夜模式
+    window.onInitElemStyle = function () {
+        miniTheme.renderElemStyle();
+        $('iframe').each(function (index, iframe) {
+            if (typeof iframe.contentWindow.onInitElemStyle == "function") {
+                iframe.contentWindow.onInitElemStyle();
+            }
+        });
+    };
+    window.onInitElemStyle();
 
     var form = layui.form,
         layer = layui.layer,
