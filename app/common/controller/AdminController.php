@@ -133,6 +133,9 @@ class AdminController extends BaseController
     {
         if ($layout) View::instance()->engine()->layout('/layout/default');
         View::assign($vars);
+        if (empty($template)) {
+            $template = strtolower(str_replace('.', '/', $this->request->controller()) . '/' . $this->request->action());
+        }
         return View::fetch($template);
     }
 
@@ -249,7 +252,7 @@ class AdminController extends BaseController
             'version'              => env('APP_DEBUG') ? time() : ConfigService::getVersion(),
             'adminUploadUrl'       => url('ajax/upload', [], false),
             'adminEditor'          => sysConfig('site', 'editor_type') ?: 'wangEditor',
-            'iframeOpenTop'           => sysConfig('site', 'iframe_open_top') ?: 0,
+            'iframeOpenTop'        => sysConfig('site', 'iframe_open_top') ?: 0,
         ];
         View::assign($data);
     }
