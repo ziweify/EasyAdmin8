@@ -22,7 +22,6 @@ body {
     min-height: 250px;
     padding: 15px;
     margin: 0 auto;
-    background-color: var(--lay-color-white);
 }
 
 .layuimini-main {
@@ -138,6 +137,13 @@ body {
     min-height: 30px !important;
     line-height: 30px !important;
     margin: 0 !important;
+    background-color: var(--lay-color-fill-2);
+}
+
+.elem-style-dark .tableSearch-xmSelect xm-select {
+    background-color: var(--lay-color-fill-2);
+    color: var(--lay-color-text-2);
+    border-color: var(--lay-color-border-1) !important;
 }
 
 /** 按钮背景色 */
