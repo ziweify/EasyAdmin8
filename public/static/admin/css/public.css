@@ -516,4 +516,5 @@ table样式
 
 .wangEditor_div {
     z-index: 99999;
+    border: 1px solid var(--w-e-textarea-slight-border-color);
 }
