@@ -41,7 +41,7 @@ class Install extends BaseController
             ];
             $currentHost = '://';
             $result      = compact('errorInfo', 'currentHost', 'isInstall', 'envInfo');
-            return view('index@install/index', $result);
+            return view('index/install/index', $result);
         }
         if ($errorInfo) $this->error($errorInfo);
         $charset    = 'utf8mb4';
