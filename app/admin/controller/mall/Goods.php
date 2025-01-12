@@ -4,6 +4,7 @@ namespace app\admin\controller\mall;
 
 use app\admin\model\MallCate;
 use app\admin\model\MallGoods;
+use app\admin\service\annotation\MiddlewareAnnotation;
 use app\common\controller\AdminController;
 use app\admin\service\annotation\ControllerAnnotation;
 use app\admin\service\annotation\NodeAnnotation;
@@ -66,4 +67,9 @@ class Goods extends AdminController
         return $this->fetch();
     }
 
+    #[MiddlewareAnnotation(ignore: MiddlewareAnnotation::IGNORE_LOGIN)]
+    public function no_check_login(Request $request): string
+    {
+        return '这里演示方法不需要经过登录验证';
+    }
 }

@@ -7,6 +7,7 @@ use app\Request;
 use Closure;
 use ReflectionClass;
 use ReflectionException;
+use app\admin\service\annotation\MiddlewareAnnotation;
 
 class CheckLogin
 {
@@ -30,6 +31,13 @@ class CheckLogin
             $noNeedCheck = $properties['noNeedCheck'] ?? [];
             if (in_array($action, $noNeedCheck)) {
                 return $next($request);
+            }
+            $reflectionMethod = new \ReflectionMethod($controllerClass, $action);
+            $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
+            foreach ($attributes as $attribute) {
+                $annotation = $attribute->newInstance();
+                $_ignore    = (array)$annotation->ignore;
+                if (in_array('LOGIN', (array)$_ignore)) return $next($request);
             }
             if (empty($adminUserInfo)) {
                 return redirect(__url('login/index'));
