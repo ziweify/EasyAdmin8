@@ -14,7 +14,7 @@ use think\Response;
 class Login extends AdminController
 {
 
-    protected bool $ignoreAuth = true;
+    protected bool $ignoreLogin = true;
 
     public function initialize(): void
     {

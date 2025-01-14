@@ -25,9 +25,10 @@ class CheckLogin
         $controllerClass = 'app\\admin\\controller\\' . $controller;
         $classObj        = new ReflectionClass($controllerClass);
         $properties      = $classObj->getDefaultProperties();
-        $ignoreAuth      = $properties['ignoreAuth'] ?? false;
-        $adminUserInfo   = session('admin');
-        if (!$ignoreAuth) {
+        // 整个控制器是否忽略登录
+        $ignoreLogin   = $properties['ignoreLogin'] ?? false;
+        $adminUserInfo = session('admin');
+        if (!$ignoreLogin) {
             $noNeedCheck = $properties['noNeedCheck'] ?? [];
             if (in_array($action, $noNeedCheck)) {
                 return $next($request);
@@ -37,7 +38,8 @@ class CheckLogin
             foreach ($attributes as $attribute) {
                 $annotation = $attribute->newInstance();
                 $_ignore    = (array)$annotation->ignore;
-                if (in_array('LOGIN', (array)$_ignore)) return $next($request);
+                // 控制器中的某个方法忽略登录
+                if (in_array('LOGIN', $_ignore)) return $next($request);
             }
             if (empty($adminUserInfo)) {
                 return redirect(__url('login/index'));
