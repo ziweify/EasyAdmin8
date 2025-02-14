@@ -45,7 +45,7 @@ class Goods extends AdminController
         return $this->fetch();
     }
 
-    #[NodeAnnotation(title: '入库', auth: false)]
+    #[NodeAnnotation(title: '入库', auth: true)]
     public function stock(Request $request, $id): string
     {
         $row = $this->model->find($id);
