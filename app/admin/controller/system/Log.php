@@ -87,6 +87,45 @@ class Log extends AdminController
         return Excel::exportData($list, $header, $fileName, 'xlsx');
     }
 
+
+    #[NodeAnnotation(title: '删除指定日志', auth: true)]
+    public function deleteMonthLog(Request $request)
+    {
+        if (!$request->isAjax()) {
+            return $this->fetch();
+        }
+
+        if ($this->isDemo) $this->error('演示环境下不允许操作');
+
+        $monthsAgo = $request->param('month/d', 0);
+        if ($monthsAgo < 1) $this->error('月份错误');
+
+        $currentDate = new \DateTime();
+        $currentDate->modify("-$monthsAgo months");
+
+        $dbPrefix   = env('DB_PREFIX');
+        $dbLike     = "{$dbPrefix}system_log_";
+        $tables     = Db::query("SHOW TABLES LIKE '$dbLike%'");
+        $threshold  = date('Ym', strtotime("-$monthsAgo month"));
+        $tableNames = [];
+        try {
+            foreach ($tables as $table) {
+                $tableName = current($table);
+                if (!preg_match("/^$dbLike\d{6}$/", $tableName)) continue;
+                $datePart   = substr($tableName, -6);
+                $issetTable = Db::query("SHOW TABLES LIKE '$tableName'");
+                if (!$issetTable) continue;
+                if ($datePart - $threshold <= 0) {
+                    Db::execute("DROP TABLE `$tableName`");
+                    $tableNames[] = $tableName;
+                }
+            }
+        }catch (PDOException) {
+        }
+        if (empty($tableNames)) $this->error('没有需要删除的表');
+        $this->success('操作成功 - 共删除 ' . count($tableNames) . ' 张表<br/>' . implode('<br>', $tableNames));
+    }
+
     #[MiddlewareAnnotation(ignore: MiddlewareAnnotation::IGNORE_LOG)]
     #[NodeAnnotation(title: '框架日志', auth: true, ignore: NodeAnnotation::IGNORE_NODE)]
     public function record(): Json|string
