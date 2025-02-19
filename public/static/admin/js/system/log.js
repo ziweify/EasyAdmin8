@@ -28,7 +28,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                         text: '删除部分日志',
                         url: 'system.log/deleteMonthLog',
                         method: 'open',
-                        auth: 'record',
+                        auth: 'deleteMonthLog',
                         class: 'layui-btn layui-btn-sm layui-btn-danger',
                         icon: 'fa fa-remove',
                         extend: 'data-width="35%" data-height="42%"'
