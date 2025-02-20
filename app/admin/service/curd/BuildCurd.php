@@ -1361,7 +1361,9 @@ class BuildCurd
 
             if ($val['formType'] == 'image') {
                 $templateValue = "{field: '{$field}', title: '{$val['comment']}', templet: ea.table.image}";
-            } elseif ($val['formType'] == 'images') {
+            } elseif ($val['formType'] == 'datetime') {
+                $templateValue = "{field: '{$field}', search: 'range', title: '{$val['comment']}'}";
+            }  elseif ($val['formType'] == 'images') {
                 continue;
             } elseif ($val['formType'] == 'file') {
                 $templateValue = "{field: '{$field}', title: '{$val['comment']}', templet: ea.table.url}";
