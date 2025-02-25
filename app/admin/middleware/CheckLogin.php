@@ -33,13 +33,16 @@ class CheckLogin
             if (in_array($action, $noNeedCheck)) {
                 return $next($request);
             }
-            $reflectionMethod = new \ReflectionMethod($controllerClass, $action);
-            $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
-            foreach ($attributes as $attribute) {
-                $annotation = $attribute->newInstance();
-                $_ignore    = (array)$annotation->ignore;
-                // 控制器中的某个方法忽略登录
-                if (in_array('LOGIN', $_ignore)) return $next($request);
+            try {
+                $reflectionMethod = new \ReflectionMethod($controllerClass, $action);
+                $attributes       = $reflectionMethod->getAttributes(MiddlewareAnnotation::class);
+                foreach ($attributes as $attribute) {
+                    $annotation = $attribute->newInstance();
+                    $_ignore    = (array)$annotation->ignore;
+                    // 控制器中的某个方法忽略登录
+                    if (in_array('LOGIN', $_ignore)) return $next($request);
+                }
+            }catch (\Throwable) {
             }
             if (empty($adminUserInfo)) {
                 return redirect(__url('login/index'));
