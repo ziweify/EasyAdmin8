@@ -1040,7 +1040,7 @@ class BuildCurd
                 $relation     = CommonTool::lineToHump($key);
                 $relationCode = "->withJoin('{$relation}', 'LEFT')\r";
                 if (!empty($val['bindSelectField']) && !empty($val['primaryKey'])) {
-                    $constructRelation = '$notes["' . lcfirst($val['modelFilename']) . ucfirst($val['bindSelectField']) . '"] = \app\admin\model\\' . $val['modelFilename'] . '::column("' . $val['bindSelectField'] . '", "' . $val['primaryKey'] . '");';
+                    $constructRelation = '$notes["' . lcfirst($val['foreignKey']) . '"] = \app\admin\model\\' . $val['modelFilename'] . '::column("' . $val['bindSelectField'] . '", "' . $val['primaryKey'] . '");';
                 }
             }
             $controllerIndexMethod = CommonTool::replaceTemplate(
@@ -1417,7 +1417,7 @@ class BuildCurd
                 } elseif (in_array($field, $this->sortFields)) {
                     $templateValue = "{field: '{$table}.{$field}', title: '{$val['comment']}', edit: 'text'}";
                 } else {
-                    $templateValue = "{field: '{$table}.{$field}', title: '{$val['comment']}'}";
+                    $templateValue = "";
                 }
 
                 $indexCols .= $this->formatColsRow("{$templateValue},\r");
