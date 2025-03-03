@@ -1240,7 +1240,7 @@ class BuildCurd
             } elseif ($val['formType'] == 'select') {
                 $templateFile = "view{$this->DS}module{$this->DS}select";
                 if (isset($val['bindRelation'])) {
-                    $define = $this->buildOptionView($val['bindRelation']);
+                    $define = $this->buildOptionView($field);
                 } elseif (!empty($val['define'])) {
                     $define = $this->buildOptionView($field);
                 }
@@ -1314,7 +1314,7 @@ class BuildCurd
             } elseif ($val['formType'] == 'select') {
                 $templateFile = "view{$this->DS}module{$this->DS}select";
                 if (isset($val['bindRelation'])) {
-                    $define = $this->buildOptionView($val['bindRelation'], '{in name="k" value="$row.' . $field . '"}selected=""{/in}');
+                    $define = $this->buildOptionView($field, '{in name="k" value="$row.' . $field . '"}selected=""{/in}');
                 } elseif (!empty($val['define'])) {
                     $define = $this->buildOptionView($field, '{in name="k" value="$row.' . $field . '"}selected=""{/in}');
                 }
@@ -1420,7 +1420,7 @@ class BuildCurd
                     $templateValue = "";
                 }
 
-                $indexCols .= $this->formatColsRow("{$templateValue},\r");
+                if ($templateValue) $indexCols .= $this->formatColsRow("{$templateValue},\r");
             }
         }
 
