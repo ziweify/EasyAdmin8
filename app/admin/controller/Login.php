@@ -4,12 +4,14 @@ namespace app\admin\controller;
 
 use app\admin\model\SystemAdmin;
 use app\common\controller\AdminController;
+use app\common\utils\Helper;
 use think\captcha\facade\Captcha;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
 use think\db\exception\ModelNotFoundException;
 use app\Request;
 use think\Response;
+use Wolfcode\RateLimiting\Attributes\RateLimitingMiddleware;
 
 class Login extends AdminController
 {
@@ -34,6 +36,7 @@ class Login extends AdminController
      * @throws DbException
      * @throws ModelNotFoundException
      */
+    #[RateLimitingMiddleware(key: [Helper::class, 'getIp'], seconds: 1, limit: 1, message: '请求过于频繁')]
     public function index(Request $request): string
     {
         $captcha = env('EASYADMIN.CAPTCHA', 1);

@@ -36,6 +36,7 @@
         "qiniu/php-sdk": "^7.11.0",
         "wolf-leo/phplogviewer": "^0.11.3",
         "wolfcode/authenticator": "^0.0.6",
+        "wolfcode/rate-limiting": "^0.1.0",
         "ext-json": "*",
         "ext-mysqli": "*",
         "ext-pdo": "*"
