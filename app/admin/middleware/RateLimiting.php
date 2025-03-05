@@ -32,10 +32,10 @@ class RateLimiting
             Bootstrap::init($controllerClass, $action, [
                 # Redis 相关配置
                 'host'     => env('REDIS_HOST', '127.0.0.1'),
-                'port'     => env('REDIS_PORT, 6379'),
+                'port'     => (int)env('REDIS_PORT', 6379),
                 'password' => env('REDIS_PASSWORD', ''),
                 'prefix'   => env('REDIS_PREFIX', ''),
-                'database' => env('REDIS_DATABASE', 0),
+                'database' => (int)env('REDIS_DATABASE', 0),
             ]);
         }catch (\Throwable $exception) {
             $this->error($exception->getMessage());
