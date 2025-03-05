@@ -21,7 +21,7 @@ class RateLimiting
     {
         // 是否启用限流器
         if (!env('RATE_LIMITING_STATUS', false)) return $next($request);
-
+        if ($request->method() == 'GET') return $next($request);
         $controller      = $request->controller();
         $module          = app('http')->getName();
         $appNamespace    = config('app.app_namespace');
