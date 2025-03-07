@@ -1761,6 +1761,60 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect"], function ($, tableSel
                 }
             },
         },
+        ai: {
+            chat: function (content, options, cancel) {
+                let id = 'chat_' + (new Date()).getTime()
+                layer.open({
+                    'title': options?.title || 'AI建议',
+                    type: 1,
+                    area: options?.area || ['42%', '60%'],
+                    shade: options?.shade || 0,
+                    shadeClose: options?.shadeClose || false,
+                    scrollbar: options?.scrollbar || false,
+                    maxmin: options?.maxmin || true,
+                    anim: options?.anim || 0,
+                    content: `<div style="padding: 20px;line-height: 1rem;white-space: pre-wrap;" id="${id}"></div>`,
+                    success: function (layero, index) {
+                        let elem = document.getElementById(id)
+                        if (options?.stream) {
+                            clearTimeout(aiStreamTimeout)
+                            aiStreamCurrentIndex = 0
+                            setTimeout(() => {
+                                admin.ai.streamOutput(elem, content)
+                            }, 300)
+                        } else {
+                            content = content.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>')
+                            setTimeout(() => {
+                                elem.innerHTML = content
+                            }, 100)
+                        }
+                    },
+                    cancel: function (index, layero) {
+                        cancel()
+                    }
+                })
+            },
+            streamOutput: function (dom, htmlContent) {
+                const chunkSize = 1;
+                let length = htmlContent.length;
+                if (aiStreamCurrentIndex < length) {
+                    const endIndex = Math.min(aiStreamCurrentIndex + chunkSize, length);
+                    const chunk = htmlContent.slice(aiStreamCurrentIndex, endIndex);
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = chunk;
+                    while (tempDiv.firstChild) {
+                        dom.appendChild(tempDiv.firstChild);
+                    }
+                    aiStreamCurrentIndex = endIndex;
+                    aiStreamTimeout = setTimeout(() => {
+                        admin.ai.streamOutput(dom, htmlContent);
+                    }, 60);
+                }
+            }
+        },
     };
+    var aiStreamCurrentIndex = 0;
+    var aiStreamTimeout = null;
+
     return admin;
 });
