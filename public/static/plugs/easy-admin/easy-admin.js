@@ -1773,7 +1773,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect"], function ($, tableSel
                     scrollbar: options?.scrollbar || false,
                     maxmin: options?.maxmin || true,
                     anim: options?.anim || 0,
-                    content: `<div style="padding: 20px;line-height: 1rem;white-space: pre-wrap;" id="${id}"></div>`,
+                    content: `<div style="padding: 20px;white-space: pre-wrap;" id="${id}"></div>`,
                     success: function (layero, index) {
                         let elem = document.getElementById(id)
                         if (options?.stream) {
@@ -1808,6 +1808,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect"], function ($, tableSel
                     aiStreamCurrentIndex = endIndex;
                     aiStreamTimeout = setTimeout(() => {
                         admin.ai.streamOutput(dom, htmlContent);
+                        dom.scrollIntoView({behavior: "smooth", block: "end"});
                     }, 60);
                 }
             }

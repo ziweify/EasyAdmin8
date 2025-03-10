@@ -79,6 +79,9 @@ class Goods extends AdminController
     #[NodeAnnotation(title: 'AI优化', auth: true)]
     public function aiOptimization(Request $request): void
     {
+        $message = $request->post('message');
+        if (empty($message)) $this->error('请输入内容');
+
         // 演示环境下 默认返回的内容
         if ($this->isDemo) {
             $content = <<<EOF
@@ -104,8 +107,6 @@ EOF;
             $this->success('success', compact('choices'));
         }
 
-        $message = $request->post('message');
-        if (empty($message)) $this->error('请输入内容');
         try {
             $result  = AiChatService::instance()
                 // 当使用推理模型时，可能存在超时的情况，所以需要设置超时时间为 0
