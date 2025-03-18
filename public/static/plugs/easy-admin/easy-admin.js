@@ -1,4 +1,4 @@
-define(["jquery", "tableSelect", "miniTheme", "xmSelect"], function ($, tableSelect, miniTheme, xmSelect) {
+define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function ($, tableSelect, miniTheme, xmSelect, lazyload) {
 
     //切换日夜模式
     window.onInitElemStyle = function () {
@@ -748,8 +748,11 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect"], function ($, tableSel
                     var values = value.split(option.imageSplit),
                         valuesHtml = [];
                     values.forEach((value, index) => {
-                        valuesHtml.push('<img style="max-width: ' + option.imageWidth + 'px; max-height: ' + option.imageHeight + 'px;" src="' + value + '" data-image="' + title + '">');
+                        valuesHtml.push('<img style="max-width: ' + option.imageWidth + 'px; max-height: ' + option.imageHeight + 'px;" class="lazyload" src="/static/common/images/loading.gif" data-src="' + value + '" data-image="' + title + '">');
                     });
+                    $(function () {
+                        $("img.lazyload").lazyload({threshold: 1});
+                    })
                     return valuesHtml.join(option.imageJoin);
                 }
             },

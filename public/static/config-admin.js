@@ -22,6 +22,7 @@ require.config({
         "vue": ["plugs/vue-2.6.10/vue.min"],
         "swiper": ["plugs/swiper/swiper-bundle.min"],
         "colorMode": ["plugs/colorMode/colorMode"],
+        "lazyload": ["plugs/lazyload/lazyload.min"],
     }
 });
 
