@@ -1596,7 +1596,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                                 cols: [[
                                     {type: selectCheck},
                                     {field: 'id', title: 'ID'},
-                                    {field: 'url', minWidth: 80, search: false, title: '图片信息', imageHeight: 40, align: "center", templet: admin.table.image},
+                                    {field: 'url', minWidth: 80, search: false, title: '图片信息', imageHeight: 30, align: "center", templet: admin.table.image},
                                     {field: 'original_name', width: 150, title: '文件原名', align: "center"},
                                     {field: 'mime_type', width: 120, title: 'mime类型', align: "center"},
                                     {field: 'create_time', width: 200, title: '创建时间', align: "center", search: 'range'},
