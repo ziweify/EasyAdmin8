@@ -49,9 +49,10 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'url', minWidth: 150, title: '路由地址', align: "left"},
                     {
                         field: 'content', minWidth: 200, title: '请求数据', align: "left", templet: function (res) {
+                            console.log(res.content)
                             let html = '<div class="layui-colla-item">' +
                                 '<div class="layui-colla-title">点击预览</div>' +
-                                '<div class="layui-colla-content">' + prettyFormat(res.content) + '</div>' +
+                                '<div class="layui-colla-content">' + prettyFormat(JSON.stringify(res.content)) + '</div>' +
                                 '</div>'
                             return '<div class="layui-collapse" lay-accordion>' + html + '</div>'
                         }
@@ -60,7 +61,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                         field: 'response', minWidth: 200, title: '回调数据', align: "left", templet: function (res) {
                             let html = '<div class="layui-colla-item">' +
                                 '<div class="layui-colla-title">点击预览</div>' +
-                                '<div class="layui-colla-content">' + prettyFormat(res.response) + '</div>' +
+                                '<div class="layui-colla-content">' + prettyFormat(JSON.stringify(res.response)) + '</div>' +
                                 '</div>'
                             return '<div class="layui-collapse" lay-accordion>' + html + '</div>'
                         }

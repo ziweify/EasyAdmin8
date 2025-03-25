@@ -8,7 +8,12 @@ use app\common\model\TimeModel;
 class SystemAdmin extends TimeModel
 {
 
-    protected $deleteTime = 'delete_time';
+    protected function getOptions(): array
+    {
+        return [
+            'deleteTime' => 'delete_time',
+        ];
+    }
 
     public array $notes = [
         'login_type' => [
@@ -17,12 +22,9 @@ class SystemAdmin extends TimeModel
         ],
     ];
 
-    public function getAuthList()
+    public function getAuthList(): array
     {
-        $list = (new SystemAuth())
-            ->where('status', 1)
-            ->column('title', 'id');
-        return $list;
+        return (new SystemAuth())->removeOption('where')->where('status', 1)->column('title', 'id');
     }
 
 }

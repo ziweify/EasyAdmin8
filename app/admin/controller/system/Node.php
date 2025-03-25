@@ -10,6 +10,9 @@ use app\admin\service\annotation\NodeAnnotation;
 use app\admin\service\NodeService;
 use app\Request;
 use think\App;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 use think\response\Json;
 
 #[ControllerAnnotation(title: '系统节点管理')]
@@ -55,11 +58,11 @@ class Node extends AdminController
 
         try {
             if ($force == 1) {
-                $updateNodeList = $model->whereIn('node', array_column($nodeList, 'node'))->select();
+                $updateNodeList = $model->removeOption('where')->whereIn('node', array_column($nodeList, 'node'))->select();
                 $formatNodeList = array_format_key($nodeList, 'node');
                 foreach ($updateNodeList as $vo) {
                     isset($formatNodeList[$vo['node']])
-                    && $model->where('id', $vo['id'])->update(
+                    && $model->removeOption('where')->where('id', $vo['id'])->update(
                         [
                             'title'   => $formatNodeList[$vo['node']]['title'],
                             'is_auth' => $formatNodeList[$vo['node']]['is_auth'],
@@ -67,7 +70,7 @@ class Node extends AdminController
                     );
                 }
             }
-            $existNodeList = $model->field('node,title,type,is_auth')->select();
+            $existNodeList = $model->removeOption('where')->field('node,title,type,is_auth')->select();
             foreach ($nodeList as $key => $vo) {
                 foreach ($existNodeList as $v) {
                     if ($vo['node'] == $v->node) {
@@ -76,8 +79,10 @@ class Node extends AdminController
                     }
                 }
             }
-            $model->saveAll($nodeList);
-            TriggerService::updateNode();
+            if (!empty($nodeList)) {
+                $model->saveAll($nodeList);
+                TriggerService::updateNode();
+            }
         }catch (\Exception $e) {
             $this->error('节点更新失败');
         }

@@ -34,7 +34,7 @@ class Log extends AdminController
             }
             [$page, $limit, $where, $excludeFields] = $this->buildTableParams(['month']);
             $month = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
-            $model = $this->model->setMonth($month)->with('admin')->where($where);
+            $model = $this->model->setSuffix("_$month")->with('admin')->where($where);
             try {
                 $count = $model->count();
                 $list  = $model->page($page, $limit)->order($this->sort)->select();
@@ -60,7 +60,8 @@ class Log extends AdminController
             $this->error('演示环境下不允许操作');
         }
         [$page, $limit, $where, $excludeFields] = $this->buildTableParams(['month']);
-        $tableName = $this->model->getName();
+        $month     = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
+        $tableName = $this->model->setSuffix("_$month")->getName();
         $tableName = CommonTool::humpToLine(lcfirst($tableName));
         $prefix    = config('database.connections.mysql.prefix');
         $dbList    = Db::query("show full columns from {$prefix}{$tableName}");
@@ -71,15 +72,18 @@ class Log extends AdminController
                 $header[] = [$comment, $vo['Field']];
             }
         }
-        $month = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
-        $model = $this->model->setMonth($month)->with('admin')->where($where);
+        $model = $this->model->setSuffix("_$month")->with('admin')->where($where);
         try {
             $list = $model
                 ->where($where)
-                ->limit(100000)
+                ->limit(10000)
                 ->order('id', 'desc')
                 ->select()
                 ->toArray();
+            foreach ($list as &$vo) {
+                $vo['content']  = json_encode($vo['content'], JSON_UNESCAPED_UNICODE);
+                $vo['response'] = json_encode($vo['response'], JSON_UNESCAPED_UNICODE);
+            }
         }catch (PDOException|DbException $exception) {
             $this->error($exception->getMessage());
         }

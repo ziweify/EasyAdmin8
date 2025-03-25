@@ -4,31 +4,41 @@ namespace app\admin\model;
 
 use app\common\constants\MenuConstant;
 use app\common\model\TimeModel;
+use think\db\exception\DataNotFoundException;
+use think\db\exception\DbException;
+use think\db\exception\ModelNotFoundException;
 
 class SystemMenu extends TimeModel
 {
-
-    protected $deleteTime = 'delete_time';
-
-    public function getPidMenuList()
+    protected function getOptions(): array
     {
-        $list        = $this->field('id,pid,title')
-            ->where([
-                ['pid', '<>', MenuConstant::HOME_PID],
-                ['status', '=', 1],
-            ])
-            ->select()
-            ->toArray();
+        return [
+            'deleteTime' => 'delete_time',
+        ];
+    }
+
+
+    /**
+     * @throws ModelNotFoundException
+     * @throws DbException
+     * @throws DataNotFoundException
+     */
+    public function getPidMenuList(): array
+    {
+        $list = $this->removeOption('where')->field('id,pid,title')->where([
+            ['pid', '<>', MenuConstant::HOME_PID],
+            ['status', '=', 1],
+        ])->select()->toArray();
+
         $pidMenuList = $this->buildPidMenu(0, $list);
-        $pidMenuList = array_merge([[
+        return array_merge([[
             'id'    => 0,
             'pid'   => 0,
             'title' => '顶级菜单',
         ]], $pidMenuList);
-        return $pidMenuList;
     }
 
-    protected function buildPidMenu($pid, $list, $level = 0)
+    protected function buildPidMenu($pid, $list, $level = 0): array
     {
         $newList = [];
         foreach ($list as $vo) {
