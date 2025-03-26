@@ -70,7 +70,7 @@ class Admin extends AdminController
             try {
                 $save = $this->model->save($post);
             }catch (\Exception $e) {
-                $this->error('保存失败');
+                $this->error('保存失败' . $e->getMessage());
             }
             $save ? $this->success('保存成功') : $this->error('保存失败');
         }
@@ -88,14 +88,11 @@ class Admin extends AdminController
             $post['auth_ids'] = implode(',', array_keys($authIds));
             $rule             = [];
             $this->validate($post, $rule);
-            if (isset($row['password'])) {
-                unset($row['password']);
-            }
             try {
                 $save = $row->save($post);
                 TriggerService::updateMenu($id);
             }catch (\Exception $e) {
-                $this->error('保存失败');
+                $this->error('保存失败' . $e->getMessage());
             }
             $save ? $this->success('保存成功') : $this->error('保存失败');
         }
