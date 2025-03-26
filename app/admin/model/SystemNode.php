@@ -9,7 +9,7 @@ class SystemNode extends TimeModel
 
     public function getNodeTreeList(): array
     {
-        $list = $this->removeOption('where')->select()->toArray();
+        $list = $this->removeOption()->select()->toArray();
         return $this->buildNodeTree($list);
     }
 

@@ -30,7 +30,7 @@ class SystemAdmin extends TimeModel
 
     public function getAuthList(): array
     {
-        return (new SystemAuth())->removeOption('where')->where('status', 1)->column('title', 'id');
+        return (new SystemAuth())->removeOption()->where('status', 1)->column('title', 'id');
     }
 
 }
