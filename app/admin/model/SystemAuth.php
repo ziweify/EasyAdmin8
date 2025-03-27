@@ -25,13 +25,13 @@ class SystemAuth extends TimeModel
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getAuthorizeNodeListByAdminId($authId): array
+    public static function getAuthorizeNodeListByAdminId($authId): array
     {
         $checkNodeList = (new SystemAuthNode())
             ->where('auth_id', $authId)
             ->column('node_id');
         $systemNode    = new SystemNode();
-        $nodeList     = $systemNode
+        $nodeList      = $systemNode
             ->where('is_auth', 1)
             ->field('id,node,title,type,is_auth')
             ->select()

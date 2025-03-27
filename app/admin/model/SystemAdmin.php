@@ -22,15 +22,15 @@ class SystemAdmin extends TimeModel
         ],
     ];
 
-    public function getAuthIdsAttr($value): array
+    public static function getAuthIdsAttr($value): array
     {
         if (!$value) return [];
         return explode(',', $value);
     }
 
-    public function getAuthList(): array
+    public static function getAuthList(): array
     {
-        return (new SystemAuth())->removeOption()->where('status', 1)->column('title', 'id');
+        return SystemAuth::where('status', 1)->column('title', 'id');
     }
 
 }

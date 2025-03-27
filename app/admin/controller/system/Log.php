@@ -22,7 +22,7 @@ class Log extends AdminController
     public function __construct(App $app)
     {
         parent::__construct($app);
-        $this->model = new SystemLog();
+        self::$model = SystemLog::class;
     }
 
     #[NodeAnnotation(title: '列表', auth: true)]
@@ -34,7 +34,7 @@ class Log extends AdminController
             }
             [$page, $limit, $where, $excludeFields] = $this->buildTableParams(['month']);
             $month = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
-            $model = $this->model->setSuffix("_$month")->with('admin')->where($where);
+            $model = (new self::$model)->setSuffix("_$month")->with('admin')->where($where);
             try {
                 $count = $model->count();
                 $list  = $model->page($page, $limit)->order($this->sort)->select();
@@ -61,7 +61,7 @@ class Log extends AdminController
         }
         [$page, $limit, $where, $excludeFields] = $this->buildTableParams(['month']);
         $month     = !empty($excludeFields['month']) ? date('Ym', strtotime($excludeFields['month'])) : date('Ym');
-        $tableName = $this->model->setSuffix("_$month")->getName();
+        $tableName = (new self::$model)->setSuffix("_$month")->getName();
         $tableName = CommonTool::humpToLine(lcfirst($tableName));
         $prefix    = config('database.connections.mysql.prefix');
         $dbList    = Db::query("show full columns from {$prefix}{$tableName}");
@@ -72,7 +72,7 @@ class Log extends AdminController
                 $header[] = [$comment, $vo['Field']];
             }
         }
-        $model = $this->model->setSuffix("_$month")->with('admin')->where($where);
+        $model = (new self::$model)->setSuffix("_$month")->with('admin')->where($where);
         try {
             $list = $model
                 ->where($where)

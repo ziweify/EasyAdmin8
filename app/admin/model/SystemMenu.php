@@ -23,14 +23,14 @@ class SystemMenu extends TimeModel
      * @throws DbException
      * @throws DataNotFoundException
      */
-    public function getPidMenuList(): array
+    public static function getPidMenuList(): array
     {
-        $list = $this->removeOption()->field('id,pid,title')->where([
+        $list = self::field('id,pid,title')->where([
             ['pid', '<>', MenuConstant::HOME_PID],
             ['status', '=', 1],
         ])->select()->toArray();
 
-        $pidMenuList = $this->buildPidMenu(0, $list);
+        $pidMenuList = self::buildPidMenu(0, $list);
         return array_merge([[
             'id'    => 0,
             'pid'   => 0,
@@ -38,7 +38,7 @@ class SystemMenu extends TimeModel
         ]], $pidMenuList);
     }
 
-    protected function buildPidMenu($pid, $list, $level = 0): array
+    protected static function buildPidMenu($pid, $list, $level = 0): array
     {
         $newList = [];
         foreach ($list as $vo) {
@@ -57,7 +57,7 @@ class SystemMenu extends TimeModel
                     $vo['title']  = $markString . $vo['title'];
                 }
                 $newList[] = $vo;
-                $childList = $this->buildPidMenu($vo['id'], $list, $level);
+                $childList = self::buildPidMenu($vo['id'], $list, $level);
                 !empty($childList) && $newList = array_merge($newList, $childList);
             }
 

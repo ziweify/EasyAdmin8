@@ -25,8 +25,8 @@ trait Curd
                 return $this->selectList();
             }
             list($page, $limit, $where) = $this->buildTableParams();
-            $count = $this->model->where($where)->count();
-            $list  = $this->model->where($where)->page($page, $limit)->order($this->sort)->select()->toArray();
+            $count = self::$model::where($where)->count();
+            $list  = self::$model::where($where)->page($page, $limit)->order($this->sort)->select()->toArray();
             $data  = [
                 'code'  => 0,
                 'msg'   => '',
@@ -46,8 +46,8 @@ trait Curd
             $rule = [];
             $this->validate($post, $rule);
             try {
-                Db::transaction(function () use ($post, &$save) {
-                    $save = $this->model->save($post);
+                Db::transaction(function() use ($post, &$save) {
+                    $save = self::$model::create($post);
                 });
             }catch (\Exception $e) {
                 $this->error('新增失败:' . $e->getMessage());
@@ -60,14 +60,14 @@ trait Curd
     #[NodeAnnotation(title: '编辑', auth: true)]
     public function edit(Request $request, $id = 0): string
     {
-        $row = $this->model->find($id);
+        $row = self::$model::find($id);
         empty($row) && $this->error('数据不存在');
         if ($request->isPost()) {
             $post = $request->post();
             $rule = [];
             $this->validate($post, $rule);
             try {
-                Db::transaction(function () use ($post, $row, &$save) {
+                Db::transaction(function() use ($post, $row, &$save) {
                     $save = $row->save($post);
                 });
             }catch (\Exception $e) {
@@ -85,7 +85,7 @@ trait Curd
         // 如果不是id作为主键 请在对应的控制器中覆盖重写
         $id = $request->param('id', []);
         $this->checkPostRequest();
-        $row = $this->model->whereIn('id', $id)->select();
+        $row = self::$model::whereIn('id', $id)->select();
         $row->isEmpty() && $this->error('数据不存在');
         try {
             $save = $row->delete();
@@ -102,7 +102,7 @@ trait Curd
             $this->error('演示环境下不允许操作');
         }
         list($page, $limit, $where) = $this->buildTableParams();
-        $tableName = $this->model->getName();
+        $tableName = (new self::$model)->getName();
         $tableName = CommonTool::humpToLine(lcfirst($tableName));
         $prefix    = config('database.connections.mysql.prefix');
         $dbList    = Db::query("show full columns from {$prefix}{$tableName}");
@@ -113,8 +113,7 @@ trait Curd
                 $header[] = [$comment, $vo['Field']];
             }
         }
-        $list     = $this->model
-            ->where($where)
+        $list     = self::$model::where($where)
             ->limit(100000)
             ->order('id', 'desc')
             ->select()
@@ -134,7 +133,7 @@ trait Curd
             'value|值'   => 'require',
         ];
         $this->validate($post, $rule);
-        $row = $this->model->find($post['id']);
+        $row = self::$model::find($post['id']);
         if (!$row) {
             $this->error('数据不存在');
         }
@@ -142,7 +141,7 @@ trait Curd
             $this->error('该字段不允许修改：' . $post['field']);
         }
         try {
-            Db::transaction(function () use ($post, $row) {
+            Db::transaction(function() use ($post, $row) {
                 $row->save([
                     $post['field'] => $post['value'],
                 ]);

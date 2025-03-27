@@ -19,9 +19,9 @@ class AdminController extends BaseController
     /**
      * 当前模型
      * @Model
-     * @var object
+     * @var mixed
      */
-    protected object $model;
+    protected static mixed $model;
 
     /**
      * 字段排序
@@ -172,7 +172,7 @@ class AdminController extends BaseController
         $where    = [];
         $excludes = [];
         // 判断是否关联查询
-        $tableName = Str::snake(lcfirst($this->model->getName()));
+        $tableName = Str::snake(lcfirst((new self::$model)->getName()));
         foreach ($filters as $key => $val) {
             if (in_array($key, $excludeFields)) {
                 $excludes[$key] = $val;
@@ -218,7 +218,7 @@ class AdminController extends BaseController
     public function selectList(): Json
     {
         $fields = input('selectFields');
-        $data   = $this->model->where($this->selectWhere)->field($fields)->select()->toArray();
+        $data   = self::$model::where($this->selectWhere)->field($fields)->select()->toArray();
         $this->success(null, $data);
     }
 
