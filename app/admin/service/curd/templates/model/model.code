@@ -7,11 +7,14 @@ use app\common\model\TimeModel;
 class {{modelName}} extends TimeModel
 {
 
-    protected $name = "{{table}}";
-
-    protected $table = "{{prefix_table}}";
-
-    protected $deleteTime = {{deleteTime}};
+    protected function getOptions(): array
+    {
+        return [
+            'name'       => "{{table}}",
+            'table'      => "{{prefix_table}}",
+            'deleteTime' => {{deleteTime}},
+        ];
+    }
 
     public array $notes = {{selectArrays}};
 
