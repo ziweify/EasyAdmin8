@@ -5,7 +5,6 @@ namespace app\admin\traits;
 use app\admin\service\annotation\NodeAnnotation;
 use app\admin\service\tool\CommonTool;
 use app\Request;
-use jianyan\excel\Excel;
 use think\facade\Db;
 use think\response\Json;
 
@@ -113,13 +112,16 @@ trait Curd
                 $header[] = [$comment, $vo['Field']];
             }
         }
-        $list     = self::$model::where($where)
+        $list = self::$model::where($where)
             ->limit(100000)
-            ->order('id', 'desc')
+            ->order($this->sort)
             ->select()
             ->toArray();
-        $fileName = time();
-        return Excel::exportData($list, $header, $fileName, 'xlsx');
+        try {
+            exportExcel($header, $list);
+        }catch (\Throwable $exception) {
+            $this->error('导出失败: ' . $exception->getMessage() . PHP_EOL . $exception->getFile() . PHP_EOL . $exception->getLine());
+        }
     }
 
     #[NodeAnnotation(title: '属性修改', auth: true)]

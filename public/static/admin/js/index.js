@@ -160,6 +160,7 @@ define(["jquery", "easy-admin", "echarts", "echarts-theme", "miniAdmin", "miniTh
                             area: ['50%', '90%'],
                             shade: 0.8,
                             shadeClose: true,
+                            scrollbar: false,
                             content: html,
                             success: function () {
                                 layui.code({elem: '.code-demo', theme: 'dark', lang: 'php'});

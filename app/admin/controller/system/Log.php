@@ -54,7 +54,7 @@ class Log extends AdminController
     }
 
     #[NodeAnnotation(title: '导出', auth: true)]
-    public function export(): bool
+    public function export()
     {
         if (env('EASYADMIN.IS_DEMO', false)) {
             $this->error('演示环境下不允许操作');
@@ -75,7 +75,6 @@ class Log extends AdminController
         $model = (new self::$model)->setSuffix("_$month")->with('admin')->where($where);
         try {
             $list = $model
-                ->where($where)
                 ->limit(10000)
                 ->order('id', 'desc')
                 ->select()
@@ -84,11 +83,10 @@ class Log extends AdminController
                 $vo['content']  = json_encode($vo['content'], JSON_UNESCAPED_UNICODE);
                 $vo['response'] = json_encode($vo['response'], JSON_UNESCAPED_UNICODE);
             }
-        }catch (PDOException|DbException $exception) {
+            exportExcel($header, $list, '操作日志');
+        }catch (\Throwable $exception) {
             $this->error($exception->getMessage());
         }
-        $fileName = time();
-        return Excel::exportData($list, $header, $fileName, 'xlsx');
     }
 
 
