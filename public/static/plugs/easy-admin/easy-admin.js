@@ -312,6 +312,10 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                             if (admin.checkAuth('export', elem)) {
                                 toolbarHtml += '<button class="layui-btn layui-btn-sm layui-btn-success easyadmin-export-btn" data-url="' + init.export_url + '" data-table-export="' + tableId + '"><i class="fa fa-file-excel-o"></i> 导出</button>\n';
                             }
+                        } else if (v === 'recycle') {
+                            if (admin.checkAuth('recycle', elem)) {
+                                toolbarHtml += '<button class="layui-btn layui-btn-sm layui-bg-orange" data-open="' + init.recycle_url + '" data-title="回收站"><i class="fa fa-recycle"></i> 回收站</button>\n';
+                            }
                         } else if (typeof v === "object") {
                             $.each(v, function (ii, vv) {
                                 vv.class = vv.class || '';
