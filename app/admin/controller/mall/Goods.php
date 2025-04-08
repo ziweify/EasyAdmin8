@@ -132,35 +132,4 @@ EOF;
         $this->success('success', compact('choices'));
     }
 
-    #[NodeAnnotation(title: '回收站', auth: true)]
-    public function recycle(Request $request): Json|string
-    {
-        if (!$request->isAjax()) {
-            return $this->fetch();
-        }
-        $id   = $request->param('id', []);
-        $type = $request->param('type', '');
-        switch ($type) {
-            case 'restore':
-                self::$model::withTrashed()->whereIn('id', $id)->update(['delete_time' => null, 'update_time' => time()]);
-                $this->success('success');
-                break;
-            case 'delete':
-                self::$model::destroy($id, true);
-                $this->success('success');
-                break;
-            default:
-                list($page, $limit, $where) = $this->buildTableParams();
-                $count = self::$model::withTrashed()->whereNotNull('delete_time')->count();
-                $list  = self::$model::withTrashed()->with(['cate'])->where($where)->page($page, $limit)->order($this->sort)->whereNotNull('delete_time')->select()->toArray();
-                $data  = [
-                    'code'  => 0,
-                    'msg'   => '',
-                    'count' => $count,
-                    'data'  => $list,
-                ];
-                return json($data);
-        }
-
-    }
 }

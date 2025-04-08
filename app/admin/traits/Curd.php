@@ -5,6 +5,7 @@ namespace app\admin\traits;
 use app\admin\service\annotation\NodeAnnotation;
 use app\admin\service\tool\CommonTool;
 use app\Request;
+use think\db\exception\PDOException;
 use think\facade\Db;
 use think\response\Json;
 
@@ -154,4 +155,49 @@ trait Curd
         $this->success('保存成功');
     }
 
+    #[NodeAnnotation(title: '回收站', auth: true)]
+    public function recycle(Request $request): Json|string
+    {
+        if (!$request->isAjax()) {
+            return $this->fetch();
+        }
+        $id              = $request->param('id', []);
+        $type            = $request->param('type', '');
+        $deleteTimeField = (new self::$model)->getOption('deleteTime'); // 获取软删除字段
+        $defaultErrorMsg = 'Model 中未设置软删除 deleteTime 对应字段 或 数据表中不存在该字段';
+        if (!$deleteTimeField) $this->success($defaultErrorMsg);
+        switch ($type) {
+            case 'restore':
+                self::$model::withTrashed()->whereIn('id', $id)->strict(false)->update([$deleteTimeField => null, 'update_time' => time()]);
+                $this->success('success');
+                break;
+            case 'delete':
+                self::$model::destroy($id, true);
+                $this->success('success');
+                break;
+            default:
+                list($page, $limit, $where) = $this->buildTableParams();
+                try {
+                    $count = self::$model::withTrashed()->where($where)->whereNotNull($deleteTimeField)->count();
+                    $list  = self::$model::withTrashed()->where($where)->page($page, $limit)->order($this->sort)->whereNotNull($deleteTimeField)->select()->toArray();
+                    $data  = [
+                        'code'  => 0,
+                        'msg'   => '',
+                        'count' => $count,
+                        'data'  => $list,
+                    ];
+                } catch (\Throwable $e) {
+                    $error = $e->getMessage();
+                    if ($e instanceof PDOException) $error .= '<br>' . $defaultErrorMsg;
+                    $data = [
+                        'code'  => -1,
+                        'msg'   => $error,
+                        'count' => 0,
+                        'data'  => [],
+                    ];
+                }
+                return json($data);
+        }
+
+    }
 }

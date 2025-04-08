@@ -1343,6 +1343,15 @@ class BuildCurd
         );
         $this->fileList[$viewEditFile] = $viewEditValue;
 
+        $viewRecycleFile                  = "{$this->rootDir}app{$this->DS}admin{$this->DS}view{$this->DS}{$this->viewFilename}{$this->DS}recycle.html";
+        $viewRecycleValue                 = CommonTool::replaceTemplate(
+            $this->getTemplate("view{$this->DS}recycle"),
+            [
+                'controllerUrl' => $this->controllerUrl,
+                'notesScript'   => $this->formatNotesScript(),
+            ]
+        );
+        $this->fileList[$viewRecycleFile] = $viewRecycleValue;
         return $this;
     }
 
@@ -1363,7 +1372,7 @@ class BuildCurd
                 $templateValue = "{field: '{$field}', title: '{$val['comment']}', templet: ea.table.image}";
             } elseif ($val['formType'] == 'datetime') {
                 $templateValue = "{field: '{$field}', search: 'range', title: '{$val['comment']}'}";
-            }  elseif ($val['formType'] == 'images') {
+            } elseif ($val['formType'] == 'images') {
                 continue;
             } elseif ($val['formType'] == 'file') {
                 $templateValue = "{field: '{$field}', title: '{$val['comment']}', templet: ea.table.url}";
@@ -1424,13 +1433,15 @@ class BuildCurd
             }
         }
 
-        $indexCols .= $this->formatColsRow("{width: 250, title: '操作', templet: ea.table.tool},\r");
+        $recycleCols = $indexCols;
+        $indexCols   .= $this->formatColsRow("{width: 250, title: '操作', templet: ea.table.tool},\r");
 
         $jsValue                 = CommonTool::replaceTemplate(
             $this->getTemplate("static{$this->DS}js"),
             [
                 'controllerUrl' => $this->controllerUrl,
                 'indexCols'     => $indexCols,
+                'recycleCols'   => $recycleCols,
             ]
         );
         $this->fileList[$jsFile] = $jsValue;
