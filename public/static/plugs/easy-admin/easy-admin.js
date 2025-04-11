@@ -1793,7 +1793,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                 layer.open({
                     'title': options?.title || 'AI建议',
                     type: 1,
-                    area: options?.area || ['42%', '60%'],
+                    area: options?.area || (admin.checkMobile() ? ['95%', '60%'] : ['50%', '60%']),
                     shade: options?.shade || 0,
                     shadeClose: options?.shadeClose || false,
                     scrollbar: options?.scrollbar || false,
@@ -1803,11 +1803,23 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                     success: function (layero, index) {
                         let elem = document.getElementById(id)
                         if (options?.stream) {
-                            clearTimeout(aiStreamTimeout)
-                            aiStreamCurrentIndex = 0
-                            setTimeout(() => {
-                                admin.ai.streamOutput(elem, content)
-                            }, 300)
+                            let index = 0;
+                            let lastTime = performance.now();
+                            const interval = options.interval || 100;
+
+                            function typeCharacter(currentTime) {
+                                if (index < content.length) {
+                                    if (currentTime - lastTime >= interval) {
+                                        elem.innerHTML += content.charAt(index);
+                                        index++;
+                                        lastTime = currentTime;
+                                        elem.scrollIntoView({behavior: "smooth", block: "end"});
+                                    }
+                                    requestAnimationFrame(typeCharacter);
+                                }
+                            }
+
+                            requestAnimationFrame(typeCharacter);
                         } else {
                             content = content.replace(/\r\n/g, '<br>').replace(/\n/g, '<br>')
                             setTimeout(() => {
@@ -1820,28 +1832,8 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                     }
                 })
             },
-            streamOutput: function (dom, htmlContent) {
-                const chunkSize = 1;
-                let length = htmlContent.length;
-                if (aiStreamCurrentIndex < length) {
-                    const endIndex = Math.min(aiStreamCurrentIndex + chunkSize, length);
-                    const chunk = htmlContent.slice(aiStreamCurrentIndex, endIndex);
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = chunk;
-                    while (tempDiv.firstChild) {
-                        dom.appendChild(tempDiv.firstChild);
-                    }
-                    aiStreamCurrentIndex = endIndex;
-                    aiStreamTimeout = setTimeout(() => {
-                        admin.ai.streamOutput(dom, htmlContent);
-                        dom.scrollIntoView({behavior: "smooth", block: "end"});
-                    }, 60);
-                }
-            }
         },
     };
-    var aiStreamCurrentIndex = 0;
-    var aiStreamTimeout = null;
 
     return admin;
 });
