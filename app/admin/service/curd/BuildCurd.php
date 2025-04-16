@@ -355,6 +355,7 @@ class BuildCurd
             if (!empty($bindSelectField) && !in_array($bindSelectField, array_column($columns, 'Field'))) {
                 throw new TableException("关联表{$relationTable}不存在该字段: {$bindSelectField}");
             }
+            $onlyFields = [];
             foreach ($columns as $vo) {
                 if (empty($primaryKey) && $vo['Key'] == 'PRI') {
                     $primaryKey = $vo['Field'];
@@ -362,6 +363,7 @@ class BuildCurd
                 if (!empty($onlyShowFields) && !in_array($vo['Field'], $onlyShowFields)) {
                     continue;
                 }
+                if (!empty($onlyShowFields)) $onlyFields[] = $vo['Field'];
                 $colum = [
                     'type'    => $vo['Type'],
                     'comment' => $vo['Comment'],
@@ -388,6 +390,7 @@ class BuildCurd
                 'bindSelectField' => $bindSelectField,
                 'delete'          => $delete,
                 'tableColumns'    => $formatColumns,
+                'onlyFields'      => $onlyFields,
             ];
             if (!empty($bindSelectField)) {
                 $relationArray                                      = explode('\\', $modelFilename);
@@ -1038,7 +1041,7 @@ class BuildCurd
             $relationCode = '';
             foreach ($this->relationArray as $key => $val) {
                 $relation     = CommonTool::lineToHump($key);
-                $relationCode = "->withJoin('{$relation}', 'LEFT')\r";
+                $relationCode = "with(['{$relation}'])";
                 if (!empty($val['bindSelectField']) && !empty($val['primaryKey'])) {
                     $constructRelation = '$notes["' . lcfirst($val['foreignKey']) . '"] = \app\admin\model\\' . $val['modelFilename'] . '::column("' . $val['bindSelectField'] . '", "' . $val['primaryKey'] . '");';
                 }
@@ -1092,16 +1095,17 @@ class BuildCurd
         $relationList = '';
         if (!empty($this->relationArray)) {
             foreach ($this->relationArray as $key => $val) {
-                $relation = CommonTool::lineToHump($key);
-                //                $relationCode = CommonTool::replaceTemplate(
-                //                    $this->getTemplate("model{$this->DS}relation"),
-                //                    [
-                //                        'relationMethod' => $relation,
-                //                        'relationModel'  => "\app\admin\model\\{$val['modelFilename']}",
-                //                        'foreignKey'     => $val['foreignKey'],
-                //                        'primaryKey'     => $val['primaryKey'],
-                //                    ]);
-                //                $relationList .= $relationCode;
+                $relation     = CommonTool::lineToHump($key);
+                $relationCode = CommonTool::replaceTemplate(
+                    $this->getTemplate("model{$this->DS}relation"),
+                    [
+                        'relationMethod' => $relation,
+                        'relationModel'  => "{$val['modelFilename']}::class",
+                        'foreignKey'     => $val['primaryKey'],
+                        'primaryKey'     => $val['foreignKey'],
+                        'relationFields' => empty($val['onlyFields']) ? "" : "->field('{$val['primaryKey']}," . implode(',', $val['onlyFields']) . "')",
+                    ]);
+                $relationList .= $relationCode;
             }
         }
 
