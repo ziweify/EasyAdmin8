@@ -1,5 +1,5 @@
 
     public function {{relationMethod}}()
     {
-        return $this->hasOne({{relationModel}}, '{{foreignKey}}', '{{primaryKey}}'){{relationFields}};
+        return $this->belongsTo({{relationModel}}, '{{foreignKey}}', '{{primaryKey}}'){{relationFields}};
     }

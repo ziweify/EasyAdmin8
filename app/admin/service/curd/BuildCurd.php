@@ -1041,7 +1041,7 @@ class BuildCurd
             $relationCode = '';
             foreach ($this->relationArray as $key => $val) {
                 $relation     = CommonTool::lineToHump($key);
-                $relationCode = "with(['{$relation}'])";
+                $relationCode = "withJoin('{$relation}', 'LEFT')";
                 if (!empty($val['bindSelectField']) && !empty($val['primaryKey'])) {
                     $constructRelation = '$notes["' . lcfirst($val['foreignKey']) . '"] = \app\admin\model\\' . $val['modelFilename'] . '::column("' . $val['bindSelectField'] . '", "' . $val['primaryKey'] . '");';
                 }
@@ -1101,8 +1101,8 @@ class BuildCurd
                     [
                         'relationMethod' => $relation,
                         'relationModel'  => "{$val['modelFilename']}::class",
-                        'foreignKey'     => $val['primaryKey'],
-                        'primaryKey'     => $val['foreignKey'],
+                        'foreignKey'     => $val['foreignKey'],
+                        'primaryKey'     => $val['primaryKey'],
                         'relationFields' => empty($val['onlyFields']) ? "" : "->field('{$val['primaryKey']}," . implode(',', $val['onlyFields']) . "')",
                     ]);
                 $relationList .= $relationCode;
@@ -1403,13 +1403,12 @@ class BuildCurd
             } else {
                 $templateValue = "{field: '{$field}', title: '{$val['comment']}'}";
             }
-
             $indexCols .= $this->formatColsRow("{$templateValue},\r");
         }
 
         // 关联表
         foreach ($this->relationArray as $table => $tableVal) {
-            $table = CommonTool::lineToHump($table);
+            $table = CommonTool::humpToLine($table);
             foreach ($tableVal['tableColumns'] as $field => $val) {
                 if ($val['formType'] == 'image') {
                     $templateValue = "{field: '{$table}.{$field}', title: '{$val['comment']}', templet: ea.table.image}";
@@ -1430,7 +1429,7 @@ class BuildCurd
                 } elseif (in_array($field, $this->sortFields)) {
                     $templateValue = "{field: '{$table}.{$field}', title: '{$val['comment']}', edit: 'text'}";
                 } else {
-                    $templateValue = "";
+                    $templateValue = "{field: '{$table}.{$field}', title: '{$val['comment']}'}";
                 }
 
                 if ($templateValue) $indexCols .= $this->formatColsRow("{$templateValue},\r");
