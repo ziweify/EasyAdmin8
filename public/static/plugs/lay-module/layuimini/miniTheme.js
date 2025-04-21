@@ -295,6 +295,24 @@ define(["jquery"], function ($) {
             }
             miniTheme.buildBodyElemStyle(elemStyleName);
         },
+
+        changeThemeMainColor() {
+            let bgcolorId = localStorage.getItem('layuiminiBgColorId');
+            if (bgcolorId === null || bgcolorId === undefined || bgcolorId === '') return false;
+            let bgcolorData = miniTheme.config(bgcolorId);
+            let mainColor = bgcolorData.headerRightBg
+            if (bgcolorId == 0) mainColor = '#16b777';
+            const bgColor = window.getComputedStyle(document.documentElement).getPropertyValue('--ea8-theme-main-color');
+            document.documentElement.style.setProperty('--ea8-theme-main-color', mainColor);
+            const iframes = document.getElementsByTagName('iframe');
+            if (iframes.length === 0) return false;
+            $.each(iframes, (i, iframe) => {
+                if (iframe === '' || iframe === undefined) return false;
+                const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDocument.documentElement.style.setProperty('--ea8-theme-main-color', mainColor);
+            })
+        },
+
         /**
          * 构建主题样式
          * @param bgcolorId
@@ -555,6 +573,7 @@ define(["jquery"], function ($) {
                     bgColorDefault: bgcolorId,
                     listen: false,
                 });
+                miniTheme.changeThemeMainColor()
             });
             $('body').on('click', '[data-select-style]', function () {
                 var elemStyleName = $(this).attr('data-select-style');

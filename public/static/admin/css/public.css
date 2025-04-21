@@ -4,6 +4,10 @@
 @import url("../css/themes/index.css");
 @import url("../css/iconfont.css");
 
+:root {
+    --ea8-theme-main-color: #16b777;
+}
+
 html,
 body {
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -304,9 +308,17 @@ table样式
 }
 
 .layui-form-select dl {
-    border: 1px #16b777 solid;
+    border: 1px var(--ea8-theme-main-color) solid;
     border-top: none;
     z-index: 99999;
+    padding: 0;
+    border-radius: 0;
+}
+
+.layui-form-select dl dd.layui-this {
+    background-color: var(--ea8-theme-main-color);
+    border-top: none;
+    color: #ffffff;
 }
 
 .form-search .layui-form-select dl {
@@ -517,4 +529,8 @@ table样式
 .wangEditor_div {
     z-index: 99999;
     border: 1px solid var(--w-e-textarea-slight-border-color);
+}
+
+.layui-input:focus, .layui-textarea:focus {
+    border-color: var(--ea8-theme-main-color) !important;
 }

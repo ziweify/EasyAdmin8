@@ -8,6 +8,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                 iframe.contentWindow.onInitElemStyle();
             }
         });
+        miniTheme.changeThemeMainColor();
     };
     window.onInitElemStyle();
 
