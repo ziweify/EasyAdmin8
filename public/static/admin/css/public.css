@@ -534,3 +534,7 @@ table样式
 .layui-input:focus, .layui-textarea:focus {
     border-color: var(--ea8-theme-main-color) !important;
 }
+
+.layui-tabs-item {
+    height: 100%;
+}

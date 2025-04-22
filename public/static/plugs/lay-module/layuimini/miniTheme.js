@@ -41,7 +41,7 @@ define(["jquery"], function ($) {
                     headerRightBg: '#23262e', //头部右侧背景色
                     headerRightBgThis: '#0c0c0c', //头部右侧选中背景色,
                     headerRightColor: 'rgba(255,255,255,.7)', //头部右侧字体颜色,
-                    headerRightChildColor: 'rgba(255,255,255,.7)', //头部右侧下拉字体颜色,
+                    headerRightChildColor: '#676767', //头部右侧下拉字体颜色,
                     headerRightColorThis: 'rgba(255,255,255,.7)', //头部右侧鼠标选中,
                     headerRightNavMore: 'rgba(255,255,255,.7)', //头部右侧更多下拉颜色,
                     headerRightNavMoreBg: '#1aa094', //头部右侧更多下拉列表选中背景色,
