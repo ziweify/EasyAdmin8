@@ -197,11 +197,14 @@
     width: 14px !important;
     height: 14px !important;
     line-height: 16px !important;
+    margin-left: 5px;
+    padding: 2px;
 }
 
 .layuimini-tab .layui-tabs-header .layui-tab-close:hover {
     border-radius: 4em;
     background: #ff5722;
+    color: #fff;
 }
 
 .layuimini-tab .layui-tabs-header .disable-close + .layui-tab-close {

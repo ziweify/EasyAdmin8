@@ -51,7 +51,7 @@ define(["jquery"], function ($) {
             }
             if (options.isIframe) tabs = parent.layui.tabs;
             tabs.add('layuiminiTab', {
-                title: `<span class="layuimini-tab-active"></span><span>${options.title}</span>`
+                title: `<span class="layuimini-tab-active"></span><span>${options.title}</span><i class="layui-icon layui-unselect layui-tab-close">ဆ</i>`
                 , content: `<iframe width="100%" height="100%" frameborder="no" border="0" src="${options.href}" style="width: 100%; height:100%;"></iframe>`
                 , id: options.tabId
             });
@@ -365,7 +365,7 @@ define(["jquery"], function ($) {
             options.listenSwichCallback = options.listenSwichCallback || function () {
 
             };
-            element.on('tab(' + options.filter + ')', function (data) {
+            tabs.on('afterChange(layuiminiTab)', function (data) {
                 var tabId = $(this).attr('lay-id');
                 if (options.urlHashLocation) {
                     location.hash = tabId;
