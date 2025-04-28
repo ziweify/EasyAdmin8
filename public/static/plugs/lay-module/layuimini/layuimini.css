@@ -637,9 +637,10 @@
 .layuimini-tab-mousedown {
     display: none;
     width: 80px;
-    position: absolute;
-    top: 0px !important;
-    left: 0px !important;
+    position: fixed;
+    top: 55px !important;
+    left: 0 !important;
+    z-index: 99999;
 }
 
 .layuimini-tab-mousedown dd a {

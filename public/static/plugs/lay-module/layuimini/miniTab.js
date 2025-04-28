@@ -313,9 +313,10 @@ define(["jquery"], function ($) {
              * 注册鼠标右键
              */
             $('body').on('mousedown', '.layuimini-tab .layui-tabs-header li', function (e) {
-                var left = $(this).offset().left - $('.layuimini-tab ').offset().left + ($(this).width() / 2),
+                var left = e.pageX ,
                     tabId = $(this).attr('lay-id');
                 if (e.which === 3) {
+                    e.preventDefault();
                     miniTab.openTabRignMenu(tabId, left);
                 }
             });

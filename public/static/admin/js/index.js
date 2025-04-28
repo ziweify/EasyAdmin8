@@ -146,7 +146,7 @@ define(["jquery", "easy-admin", "echarts", "echarts-theme", "miniAdmin", "miniTh
                 showComposerInfo: function () {
                     // <div style="padding: 25px;">12313</div>
                     let html = ``
-                    ea.request.post({
+                    ea.request.get({
                         url: ea.url('ajax/composerInfo'),
                     }, function (success) {
                         let data = success.data
