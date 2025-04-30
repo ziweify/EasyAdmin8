@@ -360,7 +360,7 @@ define(["jquery", "miniMenu", "miniTheme", "miniTab", "colorMode"], function ($,
              * 刷新
              */
             $('body').on('click', '[data-refresh]', function () {
-                $(".layui-tab-item.layui-show").find("iframe")[0].contentWindow.location.reload();
+                $(".layui-tabs-item.layui-show").find("iframe")[0].contentWindow.location.reload();
                 miniAdmin.success('刷新成功');
             });
 
