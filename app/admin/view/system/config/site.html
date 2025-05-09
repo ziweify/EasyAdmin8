@@ -13,7 +13,7 @@
         <div class="layui-input-block layuimini-upload">
             <input name="site_ico" class="layui-input layui-col-xs6" lay-verify="required" placeholder="请上传浏览器图标,ico类型" value="{:sysConfig('site','site_ico')}">
             <div class="layuimini-upload-btn">
-                <span><a class="layui-btn" data-upload="site_ico" data-upload-number="one" data-upload-exts="ico"><i class="fa fa-upload"></i> 上传</a></span>
+                <span><a class="layui-btn" data-upload="site_ico" data-upload-number="one" data-upload-exts="ico" data-upload-mimetype="image/*"><i class="fa fa-upload"></i> 上传</a></span>
                 <span><a class="layui-btn layui-btn-normal" id="select_site_ico" data-upload-select="site_ico" data-upload-number="one"><i class="fa fa-list"></i> 选择</a></span>
             </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="layui-input-block layuimini-upload">
             <input name="admin_background" class="layui-input layui-col-xs6" placeholder="不填默认#333333" value="{:sysConfig('site','admin_background')}">
             <div class="layuimini-upload-btn">
-                <span><a class="layui-btn" data-upload="admin_background" data-upload-number="one" data-upload-exts="png|jpg|jpeg"><i class="fa fa-upload"></i> 上传</a></span>
+                <span><a class="layui-btn" data-upload="admin_background" data-upload-number="one" data-upload-exts="png|jpg|jpeg" data-upload-mimetype="image/*"><i class="fa fa-upload"></i> 上传</a></span>
                 <span><a class="layui-btn layui-btn-normal" id="select_admin_background" data-upload-select="admin_background" data-upload-number="one"><i class="fa fa-list"></i> 选择</a></span>
             </div>
         </div>
