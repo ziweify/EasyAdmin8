@@ -121,6 +121,22 @@ define(["jquery", "easy-admin", "treetable", "iconPickerFa", "autocomplete"], fu
                 return false;
             });
 
+            $('body').on('click', '[data-treetable-arrow]', function () {
+                const $icon = $(this).find('i');
+                const $textNode = $icon[0].nextSibling;
+                if ($icon.hasClass('fa-arrow-up')) {
+                    treetable.foldAll(init.table_elem);
+                    $icon.removeClass('fa-arrow-up').addClass('fa-arrow-down');
+                    $textNode.textContent = ' 一键展开';
+                    $(this).attr('data-arrow', 'down');
+                } else {
+                    treetable.expandAll(init.table_elem);
+                    $icon.removeClass('fa-arrow-down').addClass('fa-arrow-up');
+                    $textNode.textContent = ' 一键折叠';
+                    $(this).attr('data-arrow', 'up');
+                }
+            })
+
             ea.table.listenSwitch({filter: 'status', url: init.modify_url});
 
             ea.table.listenEdit(init, 'currentTable', init.table_render_id, true);
