@@ -24,7 +24,7 @@ class Goods extends AdminController
     public function __construct(App $app)
     {
         parent::__construct($app);
-        self::$model = MallGoods::class;
+        self::$model = new MallGoods();
         $this->assign('cate', MallCate::column('title', 'id'));
     }
 
