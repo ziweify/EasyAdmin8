@@ -155,3 +155,45 @@ function prettyFormat(str) {
     }
     return "<pre>" + result + "</pre>"
 }
+
+if (self === top) {
+    console.group('温馨提示');
+    console.log(`%c
+
+                                                        ▄▄                    ▄▄
+▀███▀▀▀███                               ██           ▀███                    ██             ▄█▄▀▄██▄
+  ██    ▀█                              ▄██▄            ██                                  ██     ██
+  ██   █   ▄█▀██▄  ▄██▀█████▀   ▀██▀   ▄█▀██▄      ▄█▀▀███ ▀████████▄█████▄ ▀███ ▀████████▄ ▀██▄  ▄▄█
+  ██████  ██   ██  ██   ▀▀ ██   ▄█    ▄█  ▀██    ▄██    ██   ██    ██    ██   ██   ██    ██  ▄█████▄
+  ██   █  ▄▄█████  ▀█████▄  ██ ▄█     ████████   ███    ██   ██    ██    ██   ██   ██    ██ ██   ▀███
+  ██     ▄██   ██  █▄   ██   ███     █▀      ██  ▀██    ██   ██    ██    ██   ██   ██    ██ ██    ▀██
+▄██████████████▀██▄██████▀   ▄█    ▄███▄   ▄████▄ ▀████▀███▄████  ████  ████▄████▄████  ████▄███████
+                           ▄█
+                         ██▀
+%c
+
+官方网站：https://easyadmin8.top
+
+官方文档：https://edocs.easyadmin8.top
+
+问答社区：https://meta.easyadmin8.top
+
+%c重要事情说3遍：
+%c
+常见问题：https://easyadmin8.top/guide/question.html
+
+常见问题：https://easyadmin8.top/guide/question.html
+
+常见问题：https://easyadmin8.top/guide/question.html
+
+%c遇到问题先把 DEBUG 模式打开，然后把错误信息找出来，当不能解决的时候再去社区提问或者QQ群交流
+`,
+        "color:#4290f7;font-weight:bold;font-size:10px;",
+        "color:#5672cd;",
+        "color:#ff5722;font-weight:bold;font-size:1rem;",
+        "color:#5672cd;",
+        "color:#ff5722;font-weight:bold;font-size:1rem;background:#f9de97;",
+    );
+    console.groupEnd();
+}
+
