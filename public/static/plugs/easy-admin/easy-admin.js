@@ -373,7 +373,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                                 var selectHtml = '';
                                 $.each(d.selectList, function (sI, sV) {
                                     var selected = '';
-                                    if (sI === d.searchValue) {
+                                    if (sI == d.searchValue) {
                                         selected = 'selected=""';
                                     }
                                     selectHtml += '<option value="' + sI + '" ' + selected + '>' + sV + '</option>/n';
@@ -396,7 +396,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                                 formHtml += '\t<div class="layui-form-item layui-inline">\n' +
                                     '<label class="layui-form-label">' + d.title + '</label>\n' +
                                     '<div class="layui-input-inline">\n' +
-                                    '<div id="c-' + d.fieldAlias + '" class="tableSearch-xmSelect xmSelect-' + d.fieldAlias + '" name="' + d.fieldAlias + '" data-search-op="' + d.searchOp + '"></div>\n' +
+                                    '<div id="c-' + d.fieldAlias + '" class="tableSearch-xmSelect xmSelect-' + d.fieldAlias + '" name="' + d.fieldAlias + '" data-search-op="' + d.searchOp + '" data-search-value="' + d.searchValue + '"></div>\n' +
                                     '</div>\n' +
                                     '</div>';
                                 init.xmSelectList[d.fieldAlias] = d.selectList
@@ -874,8 +874,10 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
             listenTableSearch: function (tableId) {
                 if (Object.keys(init.xmSelectList).length > 0) {
                     $.each(init.xmSelectList, function (index, value) {
+                        let xmSearchValue = $('#c-' + index).data('search-value') || [];
+                        if (!Array.isArray(xmSearchValue)) xmSearchValue = (xmSearchValue.toString()).split(',')
                         const keysArray = Object.keys(value).map((key) => {
-                            return {name: value[key], value: key}
+                            return {name: value[key], value: key, selected: xmSearchValue.indexOf(key) !== -1}
                         })
                         init.xmSelectModel[index] = xmSelect.render({
                             el: '.xmSelect-' + index, language: 'zn', data: keysArray, name: index,
