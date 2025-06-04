@@ -94,7 +94,14 @@ define(["jquery"], function ($) {
         renderLeftMenu :function(leftMenus,options){
             options = options || {};
             var me = this ;
-            var leftMenusHtml =  me.each(leftMenus || [],function (idx,leftMenu) { // 左侧菜单遍历
+            let _i = 0
+            // 左侧菜单遍历
+            var leftMenusHtml =  me.each(leftMenus || [],function (idx,leftMenu) {
+                $(leftMenu).each(function (index, child) {
+                    options.childOpenClass = ''
+                    if (child.child && child.child.length && _i === 0) options.childOpenClass = ' layui-nav-itemed'
+                    _i++
+                })
                 var children = me.renderChildrenMenu(leftMenu.child, { childOpenClass:options.childOpenClass });
                 var leftMenuHtml = me.compileMenu({
                     href:leftMenu.href,

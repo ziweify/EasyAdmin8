@@ -83,6 +83,7 @@
     display: inline-block;
     height: 40px;
     vertical-align: middle;
+    border-radius: 50%;
 }
 
 .layui-layout-admin .layuimini-logo h1 {

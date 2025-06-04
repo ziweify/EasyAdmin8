@@ -27,6 +27,12 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     }
                 });
 
+                document.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' || event.keyCode === 13) {
+                        $('.login-btn').trigger('click')
+                    }
+                });
+
                 $('.login-tip').on('click', function () {
                     $('.icon-nocheck').click();
                 });
