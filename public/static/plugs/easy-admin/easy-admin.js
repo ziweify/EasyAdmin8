@@ -2,13 +2,16 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
 
     //切换日夜模式
     window.onInitElemStyle = function () {
-        miniTheme.renderElemStyle();
-        $('iframe').each(function (index, iframe) {
-            if (typeof iframe.contentWindow.onInitElemStyle == "function") {
-                iframe.contentWindow.onInitElemStyle();
-            }
-        });
-        miniTheme.changeThemeMainColor();
+        try {
+            miniTheme.renderElemStyle();
+            $('iframe').each(function (index, iframe) {
+                if (typeof iframe.contentWindow.onInitElemStyle == "function") {
+                    iframe.contentWindow.onInitElemStyle();
+                }
+            });
+            miniTheme.changeThemeMainColor();
+        } catch (e) {
+        }
     };
     window.onInitElemStyle();
 
