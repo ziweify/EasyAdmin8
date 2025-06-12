@@ -24,8 +24,8 @@ class Install extends BaseController
             $errorInfo = '已安装系统，如需重新安装请删除文件：/config/install/lock/install.lock，或者删除 /install 路由';
         }elseif (version_compare(phpversion(), '8.1.0', '<')) {
             $errorInfo = 'PHP版本不能小于8.1.0';
-        }elseif (!extension_loaded("PDO")) {
-            $errorInfo = '当前未开启PDO，无法进行安装';
+        }elseif (!extension_loaded("pdo_mysql")) {
+            $errorInfo = '当前未开启pdo_mysql，无法进行安装';
         }
         if (!is_file(root_path() . '.env')) {
             $errorInfo = '.env 文件不存在，请先配置 .env 文件';
