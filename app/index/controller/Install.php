@@ -105,12 +105,12 @@ class Install extends BaseController
             foreach ($sqlArray as $sql) {
                 $pdo->query($sql);
             }
-            $_password = password($password);
-            $tableName = 'system_admin';
-            $update    = [
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $tableName      = 'system_admin';
+            $update         = [
                 'username'    => $username,
                 'head_img'    => '/static/admin/images/head.jpg',
-                'password'    => $_password,
+                'password'    => $hashedPassword,
                 'create_time' => time(),
                 'update_time' => time()
             ];

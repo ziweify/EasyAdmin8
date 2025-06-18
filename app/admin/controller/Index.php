@@ -109,7 +109,7 @@ class Index extends AdminController
 
             try {
                 $save = $row->save([
-                    'password' => password($post['password']),
+                    'password' => password_hash($post['password'], PASSWORD_DEFAULT),
                 ]);
             }catch (Exception $e) {
                 $this->error('保存失败');

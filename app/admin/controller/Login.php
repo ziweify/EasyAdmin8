@@ -53,7 +53,7 @@ class Login extends AdminController
         if (empty($admin)) {
             $this->error('用户不存在');
         }
-        if (password($post['password']) != $admin->password) {
+        if (!password_verify($post['password'], $admin->password)) {
             $this->error('密码输入有误');
         }
         if ($admin->status == 0) {
