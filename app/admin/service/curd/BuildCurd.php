@@ -1217,6 +1217,7 @@ class BuildCurd
             } elseif ($val['formType'] == 'images') {
                 $templateFile = "view{$this->DS}module{$this->DS}images";
                 $define       = $val['define'] ?? '|';
+                if (strlen($define) > 5) $define = '|';
             } elseif ($val['formType'] == 'file') {
                 $templateFile = "view{$this->DS}module{$this->DS}file";
             } elseif ($val['formType'] == 'files') {
@@ -1234,12 +1235,12 @@ class BuildCurd
             } elseif ($val['formType'] == 'radio') {
                 $templateFile = "view{$this->DS}module{$this->DS}radio";
                 if (!empty($val['define'])) {
-                    $define = $this->buildRadioView($field, '{in name="k" value="' . $val['default'] . '"}checked=""{/in}');
+                    $define = $this->buildRadioView($field, '');
                 }
             } elseif ($val['formType'] == 'checkbox') {
                 $templateFile = "view{$this->DS}module{$this->DS}checkbox";
                 if (!empty($val['define'])) {
-                    $define = $this->buildCheckboxView($field, '{in name="k" value="' . $val['default'] . '"}checked=""{/in}');
+                    $define = $this->buildCheckboxView($field, '');
                 }
             } elseif ($val['formType'] == 'select') {
                 $templateFile = "view{$this->DS}module{$this->DS}select";
@@ -1308,19 +1309,19 @@ class BuildCurd
             } elseif ($val['formType'] == 'radio') {
                 $templateFile = "view{$this->DS}module{$this->DS}radio";
                 if (!empty($val['define'])) {
-                    $define = $this->buildRadioView($field, '{in name="k" value="$row.' . $field . '"}checked=""{/in}');
+                    $define = $this->buildRadioView($field, '{if in_array($k, $row.' . $field . ')}checked{/if}');
                 }
             } elseif ($val['formType'] == 'checkbox') {
                 $templateFile = "view{$this->DS}module{$this->DS}checkbox";
                 if (!empty($val['define'])) {
-                    $define = $this->buildCheckboxView($field, '{in name="k" value="$row.' . $field . '"}checked=""{/in}');
+                    $define = $this->buildCheckboxView($field, '{if in_array($k, $row.' . $field . ')}checked{/if}');
                 }
             } elseif ($val['formType'] == 'select') {
                 $templateFile = "view{$this->DS}module{$this->DS}select";
                 if (isset($val['bindRelation'])) {
-                    $define = $this->buildOptionView($field, '{in name="k" value="$row.' . $field . '"}selected=""{/in}');
+                    $define = $this->buildOptionView($field, '{if $row.' . $field . '==$k}selected{/if}');
                 } elseif (!empty($val['define'])) {
-                    $define = $this->buildOptionView($field, '{in name="k" value="$row.' . $field . '"}selected=""{/in}');
+                    $define = $this->buildOptionView($field, '{if $row.' . $field . '==$k}selected{/if}');
                 }
             } elseif ($field == 'remark' || $val['formType'] == 'textarea') {
                 $templateFile = "view{$this->DS}module{$this->DS}textarea";
