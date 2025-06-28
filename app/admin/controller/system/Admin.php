@@ -63,7 +63,7 @@ class Admin extends AdminController
             $rule             = [];
             $this->validate($post, $rule);
             if (empty($post['password'])) $post['password'] = '123456';
-            $post['password'] = password($post['password']);
+            $post['password'] = password_hash($post['password'],PASSWORD_DEFAULT);
             try {
                 $save = self::$model::create($post);
             }catch (\Exception $e) {
