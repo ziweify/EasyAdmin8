@@ -1668,12 +1668,30 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                                     html: $(this).text(),
                                     config: {
                                         MENU_CONF: {
+                                            // 上传图片
                                             uploadImage: {
                                                 server: window.CONFIG.ADMIN_UPLOAD_URL,
                                                 fieldName: 'file',
                                                 meta: {
                                                     editor: 'editor',
                                                 },
+                                                async customInsert(res, insertFn) {
+                                                    let code = res.code || 0
+                                                    if (code != '1') {
+                                                        layer.msg(res.msg || '上传失败', {icon: 2});
+                                                        return
+                                                    }
+                                                    let url = res.data?.url || ''
+                                                    let alt = ''
+                                                    let href = ''
+                                                    insertFn(url, alt, href)
+                                                }
+                                            },
+                                            // 上传视频
+                                            uploadVideo: {
+                                                server: window.CONFIG.ADMIN_UPLOAD_URL,
+                                                fieldName: 'file',
+                                                meta: {editor: 'editor',},
                                                 async customInsert(res, insertFn) {
                                                     let code = res.code || 0
                                                     if (code != '1') {
