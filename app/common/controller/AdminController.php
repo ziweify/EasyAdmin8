@@ -7,6 +7,7 @@ use app\admin\traits\Curd;
 use app\BaseController;
 use app\common\constants\AdminConstant;
 use app\common\traits\JumpTrait;
+use think\facade\Db;
 use think\facade\View;
 use think\helper\Str;
 use think\response\Json;
@@ -198,6 +199,9 @@ class AdminController extends BaseController
                     break;
                 case 'in':
                     $where[] = [$key, 'IN', $val];
+                    break;
+                case 'find_in_set':
+                    $where[] = ['', 'exp', Db::raw("FIND_IN_SET(:param,$key)", ['param' => $val])];
                     break;
                 case 'range':
                     [$beginTime, $endTime] = explode(' - ', $val);

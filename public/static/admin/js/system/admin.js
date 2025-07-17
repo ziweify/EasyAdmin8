@@ -16,7 +16,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
 
         index: function () {
 
-            ea.table.render({
+            let _table = ea.table.render({
                 init: init,
                 cols: [[
                     {type: "checkbox"},
@@ -57,6 +57,25 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     }
                 ]],
             });
+
+            $('body').on('click', '[data-table-reset]', function () {
+                $('.layui-menu li').removeClass('layui-menu-item-checked').animate(
+                    {}, 0, () => $('.layui-menu li:eq(0)').addClass('layui-menu-item-checked')
+                )
+            })
+            layui.util.on({
+                authSearch: function (e) {
+                    let auth_id = $(this).data('auth_id')
+                    $('.layui-menu li').removeClass('layui-menu-item-checked').animate(
+                        {}, 0, () => $(this).parents('li').addClass('layui-menu-item-checked')
+                    )
+                    let _where = auth_id ? {
+                        filter: JSON.stringify({auth_ids: auth_id}),
+                        op: JSON.stringify({auth_ids: 'find_in_set'})
+                    } : {}
+                    _table.reload({where: _where})
+                },
+            })
 
             ea.listen();
         },
