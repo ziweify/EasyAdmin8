@@ -81,6 +81,17 @@ define(["jquery", "easy-admin"], function ($, ea) {
                             'delete']
                     }
                 ]],
+                done: (res) => {
+                    // 状态为1的商品背景高亮 展示写法 可根据自己项目自定义
+                    $.each(res.data, function (idx, item) {
+                        if (item.status === 1) {
+                            $(`tr[data-index="${idx}"]`).css({
+                                'background': 'linear-gradient(to left, #77eb7c, #bbffbe, #ffffff, transparent)',
+                                'border': 'none',
+                            })
+                        }
+                    })
+                }
             });
 
             ea.listen();
