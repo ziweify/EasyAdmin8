@@ -33,9 +33,9 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {type: "checkbox"},
                     {field: 'id', width: 80, title: 'ID', searchOp: '='},
                     {field: 'sort', width: 80, title: '排序', edit: 'text'},
-                    {field: 'cate_id', minWidth: 80, title: '商品分类', search: 'select', selectList: cateSelects, laySearch: true},
-                    {field: 'title', minWidth: 80, title: '商品名称'},
-                    {field: 'logo', minWidth: 80, title: '分类图片', search: false, templet: ea.table.image},
+                    {field: 'cate_id', width: 100, title: '商品分类', search: 'select', selectList: cateSelects, laySearch: true},
+                    {field: 'title', width: 100, title: '商品名称'},
+                    {field: 'logo', width: 100, title: '分类图片', search: false, templet: ea.table.image},
                     {field: 'market_price', width: 100, title: '市场价', templet: ea.table.price},
                     {field: 'discount_price', width: 100, title: '折扣价', templet: ea.table.price},
                     {field: 'total_stock', width: 100, title: '库存统计'},
@@ -45,7 +45,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'status', title: '状态', width: 85, selectList: {0: '禁用', 1: '启用'}, templet: ea.table.switch},
                     // 演示多选，实际数据库并无 status2 字段，搜索后会报错
                     {
-                        field: 'status2', title: '演示多选', width: 105, search: 'xmSelect', selectList: {1: '模拟选项1', 2: '模拟选项2', 3: '模拟选项3', 4: '模拟选项4', 5: '模拟选项5'},
+                        field: 'status2', title: '演示多选', width: 105, search: 'xmSelect', selectList: {1: '模拟选项1', 2: '模拟选项2', 3: '模拟选项3', 4: '模拟选项4', 5: '模拟选项5'}, hide: true,
                         searchOp: 'in', templet: function (res) {
                             // 根据自己实际项目进行输出
                             return res?.status2 || '模拟数据'
@@ -180,7 +180,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'status', title: '状态', width: 85, selectList: {0: '禁用', 1: '启用'}},
                     // 演示多选，实际数据库并无 status2 字段，搜索后会报错
                     {
-                        field: 'status2', title: '演示多选', width: 105, search: 'xmSelect', selectList: {1: '模拟选项1', 2: '模拟选项2', 3: '模拟选项3', 4: '模拟选项4', 5: '模拟选项5'},
+                        field: 'status2', title: '演示多选', width: 105, search: 'xmSelect', selectList: {1: '模拟选项1', 2: '模拟选项2', 3: '模拟选项3', 4: '模拟选项4', 5: '模拟选项5'}, hide: true,
                         searchOp: 'in', templet: function (res) {
                             // 根据自己实际项目进行输出
                             return res?.status2 || '模拟数据'
