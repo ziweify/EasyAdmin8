@@ -16,6 +16,7 @@ require.config({
         "miniTongji": ["plugs/lay-module/layuimini/miniTongji"],
         "treetable": ["plugs/lay-module/treetable-lay/treetable"],
         "tableSelect": ["plugs/lay-module/tableSelect/tableSelect"],
+        "switchSelect": ["plugs/lay-module/switchSelect/switchSelect"],
         "iconPickerFa": ["plugs/lay-module/iconPicker/iconPickerFa"],
         "autocomplete": ["plugs/lay-module/autocomplete/autocomplete"],
         "xmSelect": ["plugs/xmSelect/xm-select"],

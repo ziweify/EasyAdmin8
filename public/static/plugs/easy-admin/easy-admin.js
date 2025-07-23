@@ -1,4 +1,4 @@
-define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function ($, tableSelect, miniTheme, xmSelect, lazyload) {
+define(["jquery", "tableSelect", "switchSelect", "miniTheme", "xmSelect", "lazyload"], function ($, tableSelect, switchSelect, miniTheme, xmSelect, lazyload) {
 
     //切换日夜模式
     window.onInitElemStyle = function () {
@@ -23,6 +23,7 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
         element = layui.element,
         laytpl = layui.laytpl,
         tableSelect = layui.tableSelect,
+        switchSelect = layui.switchSelect,
         util = layui.util;
 
     layer.config({
@@ -1782,6 +1783,24 @@ define(["jquery", "tableSelect", "miniTheme", "xmSelect", "lazyload"], function 
                             form.render();
                         }
                     );
+                });
+
+                let switchSelectList = document.querySelectorAll("[data-show]");
+                $.each(switchSelectList, function (i, v) {
+                    let _show = $(this).attr('data-show');
+                    if (_show === 'switchSelect') {
+                        let _data = $(this).attr('data-list');
+                        let _value = $(this).attr('data-value') || ''
+                        let _target = $(this).attr('data-target') || ''
+                        let _name = $(this).attr('data-name') || ''
+                        try {
+                            new switchSelect({
+                                elem: $(this), data: JSON.parse(_data), default: _value, target: _target, name: _name
+                            });
+                        } catch (e) {
+                            console.error(e)
+                        }
+                    }
                 });
             },
             date: function () {
