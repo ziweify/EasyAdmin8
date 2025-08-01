@@ -20,6 +20,7 @@ return [
     // 应用映射（自动多应用模式有效）
     'app_map'               => [
         Env::get('EASYADMIN.ADMIN', 'admin') => 'admin',
+        'api' => 'api',  // 添加 api 应用映射
     ],
     // 域名绑定（自动多应用模式有效）
     'domain_bind'           => [],
