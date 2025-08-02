@@ -12,9 +12,21 @@ use think\facade\Route;
 
 Route::any('install', '\app\index\controller\Install@index');
 
-// API 路由 - 使用多应用模式的路由方式
+
+// 跟单大师API路由组 - 使用多应用模式
 Route::group('api', function () {
-    Route::get('getuser', 'api/Api/getUser');
-    Route::get('getdate', 'api/Api/getDate');
-    Route::get('getsysteminfo', 'api/Api/getSystemInfo');
-});
+    Route::get('getdate', 'api/Gdds/getDate');
+    Route::get('getSystemInfo', 'api/Gdds/getSystemInfo');
+    Route::post('login', 'api/Gdds/login');
+});//->prefix('api/');
+
+// 测试路由
+Route::get('test', function() {
+    return json(['message' => 'Test route works!']);
+})
+
+//Route::get('api/getdate', 'api/Gdds/getDate');
+
+// API测试路由
+Route::get('api/test', 'api/Test/index');
+Route::get('api/hello', 'api/Test/hello');

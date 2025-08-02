@@ -1,0 +1,76 @@
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form layuimini-form">
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" class="layui-input" lay-verify="required" placeholder="请输入用户名" value="{$row.username|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="password" class="layui-input" lay-verify="required" placeholder="请输入密码" value="{$row.password|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">软件版本</label>
+            <div class="layui-input-block">
+                <input type="text" name="soft_version" class="layui-input" lay-verify="required" placeholder="请输入软件版本" value="{$row.soft_version|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea name="remark" class="layui-textarea"  placeholder="请输入备注">{$row.remark|raw|default=''}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API公钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="api_public_key" class="layui-input" lay-verify="required" placeholder="请输入API公钥" value="{$row.api_public_key|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API私钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="api_private_key" class="layui-input" lay-verify="required" placeholder="请输入API私钥" value="{$row.api_private_key|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API令牌</label>
+            <div class="layui-input-block">
+                <input type="text" name="api_token" class="layui-input" lay-verify="required" placeholder="请输入API令牌" value="{$row.api_token|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态(1:禁用,2:启用)</label>
+            <div class="layui-input-block">
+                <input type="text" name="status" class="layui-input"  placeholder="请输入状态(1:禁用,2:启用)" value="{$row.status|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" class="layui-input" lay-affix="number"  placeholder="请输入排序" value="{$row.sort|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">最后登录时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="last_login_time" class="layui-input"  placeholder="请输入最后登录时间" value="{$row.last_login_time|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">最后登录IP</label>
+            <div class="layui-input-block">
+                <input type="text" name="last_login_ip" class="layui-input"  placeholder="请输入最后登录IP" value="{$row.last_login_ip|default=''}">
+            </div>
+        </div>
+        <div class="hr-line"></div>
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+    </form>
+</div>

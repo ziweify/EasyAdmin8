@@ -2,12 +2,71 @@
 
 namespace app\api\controller;
 
-use app\BaseController;
+use think\Request;
 use think\Response;
 
 // 跟单大师
-class Gdds extends BaseController
+class Gdds
 {
+
+    public function index()
+    {
+        return json([
+            'code' => 200,
+            'message' => 'API Test Controller works!',
+            'data' => [
+                'time' => date('Y-m-d H:i:s'),
+                'controller' => 'Test',
+                'action' => 'index'
+            ]
+        ]);
+    }
+
+    public function test()
+    {
+        return "test";
+    }
+    
+    public function login()
+    {
+        // 获取请求参数
+        $name = input('name');
+        $pwd = input('pwd');
+
+        if (empty($name) || empty($pwd)) {
+            return json([
+                'code' => 400,
+                'message' => '用户名和密码不能为空'
+            ]);
+        }
+
+        // 使用模型处理登录逻辑
+        $userModel = new \app\api\model\GddsUser();
+        $result = $userModel->login($name, $pwd);
+
+        if (!$result['success']) {
+            return json([
+                'code' => 401,
+                'message' => $result['message']
+            ]);
+        }
+
+        return json([
+            'code' => 200,
+            'message' => '登录成功',
+            'data' => [
+                'user_id' => $result['data']['user_id'],
+                'name' => $result['data']['name'],
+                'api_token' => $result['data']['api_token'],
+                'api_public_key' => $result['data']['api_public_key']
+            ]
+        ]);
+
+
+
+    }
+
+
     /**
      * 获取用户信息
      * @return Response

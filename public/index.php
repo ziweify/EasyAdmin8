@@ -14,6 +14,10 @@ namespace think;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// 启用调试模式
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // 执行HTTP应用并响应
 $http = (new App())->http;
 
