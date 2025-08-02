@@ -15,6 +15,27 @@ Date: 2020-05-17 23:24:06
 
 SET
 FOREIGN_KEY_CHECKS=0;
+--- 跟单大师用户表
+DROP TABLE IF EXISTS `ea_gdds_user`;
+CREATE TABLE `ea_gdds_user` (
+    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `username` varchar(20) NOT NULL COMMENT '用户名',
+    `password` varchar(255) NOT NULL COMMENT '密码',
+    `soft_version` varchar(255) NOT NULL COMMENT '软件版本',
+    `remark` varchar(255) NOT NULL COMMENT '备注',
+    `api_public_key` varchar(255) NOT NULL COMMENT 'API公钥',
+    `api_private_key` varchar(255) NOT NULL COMMENT 'API私钥',
+    `api_token` varchar(255) NOT NULL COMMENT 'API令牌',
+    `status`      tinyint(1) unsigned DEFAULT '1' COMMENT '状态(1:禁用,2:启用)',
+    `sort` int(11) DEFAULT '0' COMMENT '排序',
+    `last_login_time` int(11) DEFAULT NULL COMMENT '最后登录时间',
+    `last_login_ip` varchar(255) DEFAULT NULL COMMENT '最后登录IP',
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+    `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+    `delete_time` int(11) DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `username` (`username`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT COMMENT='跟单大师用户表';
 
 -- ----------------------------
 -- Table structure for ea_mall_cate
