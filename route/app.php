@@ -23,7 +23,7 @@ Route::group('api', function () {
 // 测试路由
 Route::get('test', function() {
     return json(['message' => 'Test route works!']);
-})
+});
 
 //Route::get('api/getdate', 'api/Gdds/getDate');
 
