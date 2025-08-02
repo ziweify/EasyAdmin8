@@ -22,7 +22,7 @@ CREATE TABLE `ea_gdds_user` (
     `username` varchar(20) NOT NULL COMMENT '用户名',
     `password` varchar(255) NOT NULL COMMENT '密码',
     `soft_version` varchar(255) NOT NULL COMMENT '软件版本',
-    `remark` varchar(255) NOT NULL COMMENT '备注',
+    `remark` varchar(255) DEFAULT NULL COMMENT '备注',
     `api_public_key` varchar(255) NOT NULL COMMENT 'API公钥',
     `api_private_key` varchar(255) NOT NULL COMMENT 'API私钥',
     `api_token` varchar(255) NOT NULL COMMENT 'API令牌',
