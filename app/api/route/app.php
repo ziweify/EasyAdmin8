@@ -11,4 +11,10 @@ Route::group('gdds', function () {
     Route::get('getDate', 'Gdds/getDate'); 
     Route::get('getSystemInfo', 'Gdds/getSystemInfo');
     Route::post('login', 'Gdds/login');
+    Route::get('test', 'Gdds/test');
+}); 
+
+
+Route::group('test', function () {
+    Route::get('hello', 'test/hello');
 }); 

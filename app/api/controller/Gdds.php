@@ -24,9 +24,12 @@ class Gdds
 
     public function test()
     {
-        return "test";
+        $userModel = new \app\api\model\GddsUser();
+        $result = $userModel->test();
+        return $result;
     }
     
+    //http://172.28.35.182:8850/api/gdds/login?name=ds1000&pwd=Aaa111
     public function login()
     {
         // 获取请求参数
@@ -41,7 +44,7 @@ class Gdds
         }
 
         // 使用模型处理登录逻辑
-        $userModel = new \app\api\model\GddsUser();
+        $userModel = new \app\admin\model\GddsUser();
         $result = $userModel->login($name, $pwd);
 
         if (!$result['success']) {

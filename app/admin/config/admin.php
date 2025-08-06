@@ -9,6 +9,7 @@ return [
         'ajax',
         'login',
         'index',
+        'test',
     ],
 
     // 不需要验证权限的节点

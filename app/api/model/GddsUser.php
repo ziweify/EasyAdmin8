@@ -1,6 +1,6 @@
 <?php
 
-namespace app\admin\model;
+namespace app\api\model;
 
 use app\common\model\TimeModel;
 

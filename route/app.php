@@ -14,11 +14,11 @@ Route::any('install', '\app\index\controller\Install@index');
 
 
 // 跟单大师API路由组 - 使用多应用模式
-Route::group('api', function () {
-    Route::get('getdate', 'api/Gdds/getDate');
-    Route::get('getSystemInfo', 'api/Gdds/getSystemInfo');
-    Route::post('login', 'api/Gdds/login');
-});//->prefix('api/');
+// Route::group('api', function () {
+//     Route::get('getdate', 'api/Gdds/getDate');
+//     Route::get('getSystemInfo', 'api/Gdds/getSystemInfo');
+//     Route::post('login', 'api/Gdds/login');
+// });
 
 // 测试路由
 Route::get('test', function() {
