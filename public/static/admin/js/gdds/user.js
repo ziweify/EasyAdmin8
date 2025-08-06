@@ -18,7 +18,25 @@ define(["jquery", "easy-admin"], function ($, ea) {
             ea.table.render({
                 init: init,
                 cols: [[
-                    {type: 'checkbox'},                    {field: 'id', title: 'id'},                    {field: 'username', title: '用户名'},                    {field: 'password', title: '密码'},                    {field: 'soft_version', title: '软件版本'},                    {field: 'remark', title: '备注', templet: ea.table.text},                    {field: 'api_public_key', title: 'API公钥'},                    {field: 'api_private_key', title: 'API私钥'},                    {field: 'api_token', title: 'API令牌'},                    {field: 'status', title: '状态(1:禁用,2:启用)'},                    {field: 'sort', title: '排序', edit: 'text'},                    {field: 'last_login_time', title: '最后登录时间'},                    {field: 'last_login_ip', title: '最后登录IP'},                    {field: 'create_time', title: '创建时间'},                    {width: 250, title: '操作', templet: ea.table.tool},
+                    {type: 'checkbox', width: 50},
+                    {field: 'id', width: 80, title: 'ID'},
+                    {field: 'username', width: 120, title: '用户名'},
+                    {field: 'password', width: 100, title: '密码'},
+                    {field: 'soft_version', width: 100, title: '软件版本'},
+                    {field: 'remark', width: 120, title: '备注', templet: ea.table.text},
+                    {field: 'api_public_key', width: 150, title: 'API公钥',hide: true},
+                    {field: 'api_private_key', width: 150, title: 'API私钥',hide: true},
+                    {field: 'api_token', width: 150, title: 'API令牌'},
+                    {field: 'status', width: 85, title: '状态', templet: ea.table.switch},
+                    {field: 'sort', width: 80, title: '排序', edit: 'text'},
+                    {field: 'last_login_time', width: 180, title: '最后登录信息', templet: function(d) {
+                        return '<div style="line-height: 1.5;">' + 
+                               '<div style="font-weight: bold;">' + (d.last_login_time || '未登录') + '</div>' + 
+                               '<div style="color: #999; font-size: 12px;">' + (d.last_login_ip || '无IP记录') + '</div>' + 
+                               '</div>';
+                    }},
+                    {field: 'create_time', width: 150, title: '创建时间'},
+                    {width: 250, title: '操作', templet: ea.table.tool},
                 ]],
             });
 
@@ -58,9 +76,26 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     }], 'export',
                 ],
                 cols: [[
-                    {type: 'checkbox'},                    {field: 'id', title: 'id'},                    {field: 'username', title: '用户名'},                    {field: 'password', title: '密码'},                    {field: 'soft_version', title: '软件版本'},                    {field: 'remark', title: '备注', templet: ea.table.text},                    {field: 'api_public_key', title: 'API公钥'},                    {field: 'api_private_key', title: 'API私钥'},                    {field: 'api_token', title: 'API令牌'},                    {field: 'status', title: '状态(1:禁用,2:启用)'},                    {field: 'sort', title: '排序', edit: 'text'},                    {field: 'last_login_time', title: '最后登录时间'},                    {field: 'last_login_ip', title: '最后登录IP'},                    {field: 'create_time', title: '创建时间'},
+                    {type: 'checkbox', width: 50},
+                    {field: 'id', width: 80, title: 'ID'},
+                    {field: 'username', width: 120, title: '用户名'},
+                    {field: 'password', width: 100, title: '密码'},
+                    {field: 'soft_version', width: 100, title: '软件版本'},
+                    {field: 'remark', width: 120, title: '备注', templet: ea.table.text},
+                    {field: 'api_public_key', width: 150, title: 'API公钥',hide: true},
+                    {field: 'api_private_key', width: 150, title: 'API私钥',hide: true},
+                    {field: 'api_token', width: 150, title: 'API令牌'},
+                    {field: 'status', width: 85, title: '状态', templet: ea.table.switch},
+                    {field: 'sort', width: 80, title: '排序', edit: 'text'},
+                    {field: 'last_login_time', width: 180, title: '最后登录信息', templet: function(d) {
+                        return '<div style="line-height: 1.5;">' + 
+                               '<div style="font-weight: bold;">' + (d.last_login_time || '未登录') + '</div>' + 
+                               '<div style="color: #999; font-size: 12px;">' + (d.last_login_ip || '无IP记录') + '</div>' + 
+                               '</div>';
+                    }},
+                    {field: 'create_time', width: 150, title: '创建时间'},
                     {
-                        width: 250,
+                        width: 200,
                         title: '操作',
                         templet: ea.table.tool,
                         operat: [
