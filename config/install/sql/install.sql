@@ -354,6 +354,10 @@ INSERT INTO `ea_system_menu`
 VALUES ('253', '228', '日志管理', 'fa fa-connectdevelop', 'system.log/index', '', '_self', '0', '1', '', '1589623684', '1589623684', null);
 INSERT INTO `ea_system_menu`
 VALUES ('254', '228', 'CURD可视化', 'fa fa fa-shower', 'system.curd_generate/index', '', '_self', '0', '1', '', '1589623684', '1589623684', null);
+INSERT INTO `ea_system_menu`
+VALUES ('255', '0', '跟单大师', 'fa fa-list', '', '', '_self', '0', '1', '', '1754402212', '1754402212', null);
+INSERT INTO `ea_system_menu`
+VALUES ('256', '255', '用户管理', 'fa fa-list', 'gdds.user/index', '', '_self', '0', '1', '', '1754402293', '1754402293', null);
 
 -- ----------------------------
 -- Table structure for ea_system_node
