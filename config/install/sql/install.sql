@@ -41,6 +41,11 @@ CREATE TABLE `ea_gdds_user` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `username` (`username`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT COMMENT='跟单大师用户表';
+-- ----------------------------
+-- Records of ea_gdds_user
+-- ----------------------------
+INSERT INTO `ea_gdds_user`
+VALUES ('1', 'ds1000', 'Aaa111', '1.2.35', '', '', '', '', '1', '1', '1', '1', '0', '0', '1754402703', '1754519252');
 
 -- ----------------------------
 -- Table structure for ea_mall_cate

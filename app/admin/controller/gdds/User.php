@@ -23,4 +23,6 @@ class User extends AdminController
         $this->assign(compact('notes'));
     }
 
+    
+
 }

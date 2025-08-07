@@ -16,8 +16,7 @@ class GddsUser extends TimeModel
         ];
     }
 
-    public static array $notes = [
-];
+    public static array $notes = [];
 
     public function login($name, $pwd)
     {
@@ -27,7 +26,7 @@ class GddsUser extends TimeModel
         }
     }
 
-    public function getUser($user_id)
+    public function getUser($user_id)   
     {
         $user = self::where('user_id', $user_id)->find();
         if (!$user) {
