@@ -10,7 +10,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">密码</label>
             <div class="layui-input-block">
-                <input type="text" name="password" class="layui-input" lay-verify="required" placeholder="请输入密码" value="">
+                <input type="password" name="password" class="layui-input" lay-verify="required" placeholder="请输入密码" value="">
+                <div class="layui-form-mid layui-word-aux">密码长度建议6-20位</div>
             </div>
         </div>
         <div class="layui-form-item">
@@ -22,7 +23,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">窗口(允许数量)</label>
             <div class="layui-input-block">
-                <input type="text" name="allow_window" class="layui-input" lay-verify="required" placeholder="请输入允许的窗口数量" value="1">
+                <input type="number" name="allow_window" class="layui-input" lay-verify="required|number" min="1" max="100" placeholder="请输入允许的窗口数量" value="1">
+                <div class="layui-form-mid layui-word-aux">建议范围：1-100</div>
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
@@ -50,9 +52,11 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">状态(1:禁用,2:启用)</label>
+            <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="text" name="status" class="layui-input"  placeholder="请输入状态(1:禁用,2:启用)" value="2">
+                <input type="radio" name="status" value="1" title="禁用">
+                <input type="radio" name="status" value="2" title="启用" checked>
+                <div class="layui-form-mid layui-word-aux">状态会根据VIP时间自动调整</div>
             </div>
         </div>
         <div class="layui-form-item">
@@ -64,47 +68,51 @@
         <div class="layui-form-item">
             <label class="layui-form-label">最后登录时间</label>
             <div class="layui-input-block">
-                <input type="text" name="last_login_time" class="layui-input"  placeholder="请输入最后登录时间" value="">
+                <input type="text" name="last_login_time" class="layui-input" readonly placeholder="最后登录时间" value="">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">最后登录IP</label>
             <div class="layui-input-block">
-                <input type="text" name="last_login_ip" class="layui-input"  placeholder="请输入最后登录IP" value="">
+                <input type="text" name="last_login_ip" class="layui-input" readonly placeholder="最后登录IP" value="">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">日卡消费</label>
             <div class="layui-input-block">
-                <input type="text" name="carday_consumption" class="layui-input"  placeholder="请输入日卡消费" value="0">
+                <input type="number" name="carday_consumption" class="layui-input" min="0" step="1" placeholder="请输入日卡消费" value="0">
+                <div class="layui-form-mid layui-word-aux">消费次数，每次+1递增</div>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">周卡消费</label>
             <div class="layui-input-block">
-                <input type="text" name="carweek_consumption" class="layui-input"  placeholder="请输入周卡消费" value="0">
+                <input type="number" name="carweek_consumption" class="layui-input" min="0" step="1" placeholder="请输入周卡消费" value="0">
+                <div class="layui-form-mid layui-word-aux">消费次数，每次+1递增</div>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">月卡消费</label>
             <div class="layui-input-block">
-                <input type="text" name="carmonth_consumption" class="layui-input"  placeholder="请输入月卡消费" value="0">
+                <input type="number" name="carmonth_consumption" class="layui-input" min="0" step="1" placeholder="请输入月卡消费" value="0">
+                <div class="layui-form-mid layui-word-aux">消费次数，每次+1递增</div>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">vip权限</label>
+            <label class="layui-form-label">VIP权限</label>
             <div class="layui-input-block">
-                <input type="text" name="vip_function" class="layui-input"  placeholder="请输入vip权限" value="1">
+                <input type="text" name="vip_function" class="layui-input" placeholder="请输入VIP权限" value="1">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">vip时间</label>
+            <label class="layui-form-label">VIP状态</label>
             <div class="layui-input-block">
-                <input type="radio" name="vip_status" value="1" title="开通VIP" checked>
-                <input type="radio" name="vip_status" value="0" title="未开通">
+                <input type="radio" name="vip_status" value="1" title="开通VIP" lay-filter="vip_status" checked>
+                <input type="radio" name="vip_status" value="0" title="未开通" lay-filter="vip_status">
                 <div style="margin-top: 10px;">
                     <input type="text" name="vip_off_time" class="layui-input" id="vip_off_time" lay-verify="required" placeholder="请选择VIP到期时间" value="">
                 </div>
+                <div class="layui-form-mid layui-word-aux">VIP过期后用户状态将自动设置为禁用</div>
             </div>
         </div>
         <div class="hr-line"></div>
@@ -120,15 +128,14 @@ layui.use(['form', 'laydate'], function(){
     var form = layui.form;
     var laydate = layui.laydate;
     
-    // 设置VIP时间默认值为当前时间+30分钟
+    // 设置VIP时间默认值为当前时间+30天
     var now = new Date();
-    now.setMinutes(now.getMinutes() + 30);
+    now.setDate(now.getDate() + 30);
     var defaultVipTime = now.getFullYear() + '-' + 
                         String(now.getMonth() + 1).padStart(2, '0') + '-' + 
                         String(now.getDate()).padStart(2, '0') + ' ' + 
                         String(now.getHours()).padStart(2, '0') + ':' + 
-                        String(now.getMinutes()).padStart(2, '0') + ':' + 
-                        String(now.getSeconds()).padStart(2, '0');
+                        String(now.getMinutes()).padStart(2, '0') + ':00';
     
     // 设置VIP时间输入框的默认值
     document.getElementById('vip_off_time').value = defaultVipTime;
@@ -138,26 +145,40 @@ layui.use(['form', 'laydate'], function(){
         elem: '#vip_off_time',
         type: 'datetime',
         format: 'yyyy-MM-dd HH:mm:ss',
+        min: 0, // 不允许选择过去的时间
         value: defaultVipTime
     });
     
-    // 监听VIP状态选择
+    // VIP状态切换处理
     form.on('radio(vip_status)', function(data){
+        var vipOffTimeInput = document.getElementById('vip_off_time');
         if (data.value == '0') {
-            // 选择未开通时，清空VIP时间并禁用输入框
-            document.getElementById('vip_off_time').value = '';
-            document.getElementById('vip_off_time').disabled = true;
+            // 选择"未开通"时，禁用VIP时间输入框并清空值
+            vipOffTimeInput.disabled = true;
+            vipOffTimeInput.value = '';
         } else {
-            // 选择开通VIP时，启用输入框并设置默认时间
-            document.getElementById('vip_off_time').disabled = false;
-            if (!document.getElementById('vip_off_time').value) {
-                document.getElementById('vip_off_time').value = defaultVipTime;
+            // 选择"开通VIP"时，启用VIP时间输入框
+            vipOffTimeInput.disabled = false;
+            // 如果当前没有设置时间，默认设置为当前时间+30天
+            if (!vipOffTimeInput.value) {
+                var now = new Date();
+                now.setDate(now.getDate() + 30);
+                vipOffTimeInput.value = now.getFullYear() + '-' + 
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(now.getDate()).padStart(2, '0') + ' ' + 
+                    String(now.getHours()).padStart(2, '0') + ':' + 
+                    String(now.getMinutes()).padStart(2, '0') + ':00';
             }
         }
     });
     
     // 表单提交处理
     form.on('submit', function(data){
+        // 表单验证
+        if (!validateForm(data.field)) {
+            return false;
+        }
+        
         // 如果选择未开通VIP，清空VIP时间字段
         if (data.field.vip_status == '0') {
             data.field.vip_off_time = '';
@@ -178,11 +199,44 @@ layui.use(['form', 'laydate'], function(){
                         parent.layui.table.reload("currentTableId");
                     });
                 } else {
-                    layer.msg(data.msg, {icon: 2, time: 1000});
+                    layer.msg(data.msg, {icon: 2, time: 2000});
                 }
+            },
+            error: function(xhr, status, error) {
+                layer.close(loadIndex);
+                layer.msg('网络错误，请稍后重试', {icon: 2, time: 2000});
             }
         });
         return false;
     });
+    
+    // 表单验证函数
+    function validateForm(field) {
+        // 验证用户名
+        if (field.username.length < 2 || field.username.length > 20) {
+            layer.msg('用户名长度应在2-20位之间', {icon: 2, time: 2000});
+            return false;
+        }
+        
+        // 验证密码
+        if (field.password.length < 6 || field.password.length > 20) {
+            layer.msg('密码长度应在6-20位之间', {icon: 2, time: 2000});
+            return false;
+        }
+        
+        // 验证窗口数量
+        if (field.allow_window < 1 || field.allow_window > 100) {
+            layer.msg('窗口数量应在1-100之间', {icon: 2, time: 2000});
+            return false;
+        }
+        
+        // 验证VIP时间
+        if (field.vip_status == '1' && !field.vip_off_time) {
+            layer.msg('请选择VIP到期时间', {icon: 2, time: 2000});
+            return false;
+        }
+        
+        return true;
+    }
 });
 </script>

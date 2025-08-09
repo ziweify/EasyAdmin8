@@ -49,4 +49,45 @@ class CheckVipStatus extends Command
         $output->writeln('VIP状态检查完成！');
         return 0;
     }
+
+    /**
+     * 批量修复数据库中的状态不一致问题
+     */
+    public function fixStatusInconsistency()
+    {
+        $this->output->writeln('开始修复状态不一致问题...');
+        
+        try {
+            $db = \think\facade\Db::name('gdds_user');
+            
+            // 修复VIP时间为0但状态为启用的用户
+            $count1 = $db->where('vip_off_time', 0)
+                ->where('status', 2)
+                ->update(['status' => 1]);
+            
+            // 修复VIP时间为空但状态为启用的用户
+            $count2 = $db->where(function($query) {
+                    $query->where('vip_off_time', '')
+                          ->whereOr('vip_off_time', 'is', null);
+                })
+                ->where('status', 2)
+                ->update(['status' => 1]);
+            
+            // 修复VIP时间已过期但状态为启用的用户
+            $now = time();
+            $count3 = $db->where('vip_off_time', '<', $now)
+                ->where('vip_off_time', '>', 0)
+                ->where('status', 2)
+                ->update(['status' => 1]);
+            
+            $total = $count1 + $count2 + $count3;
+            $this->output->writeln("修复完成！共修复 {$total} 条记录：");
+            $this->output->writeln("- VIP时间为0的记录：{$count1} 条");
+            $this->output->writeln("- VIP时间为空的记录：{$count2} 条");
+            $this->output->writeln("- VIP时间已过期的记录：{$count3} 条");
+            
+        } catch (\Exception $e) {
+            $this->output->writeln('修复失败：' . $e->getMessage());
+        }
+    }
 } 
