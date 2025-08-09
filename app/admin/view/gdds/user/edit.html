@@ -100,7 +100,11 @@
         <div class="layui-form-item">
             <label class="layui-form-label">vip时间</label>
             <div class="layui-input-block">
-                <input type="text" name="vip_off_time" class="layui-input"  placeholder="请输入vip时间" value="{$row.vip_off_time|default=''}">
+                <input type="radio" name="vip_status" value="1" title="开通VIP" lay-filter="vip_status" {if condition="$row.vip_off_time && $row.vip_off_time > 0"}checked{/if}>
+                <input type="radio" name="vip_status" value="0" title="未开通" lay-filter="vip_status" {if condition="!$row.vip_off_time || $row.vip_off_time == 0"}checked{/if}>
+                <div style="margin-top: 10px;">
+                    <input type="text" name="vip_off_time" class="layui-input" id="vip_off_time" lay-verify="required" placeholder="请选择VIP到期时间" value="{if condition='$row.vip_off_time && $row.vip_off_time > 0 && is_numeric($row.vip_off_time)'}{:date('Y-m-d H:i:s', $row.vip_off_time)}{elseif condition='$row.vip_off_time && $row.vip_off_time > 0'}{$row.vip_off_time}{/if}" {if condition="!$row.vip_off_time || $row.vip_off_time == 0"}disabled{/if}>
+                </div>
             </div>
         </div>
         <div class="hr-line"></div>
@@ -110,3 +114,54 @@
         </div>
     </form>
 </div>
+
+<script>
+layui.use(['form', 'laydate'], function(){
+    var form = layui.form;
+    var laydate = layui.laydate;
+    
+    // 初始化VIP时间日期时间选择器
+    laydate.render({
+        elem: '#vip_off_time',
+        type: 'datetime',
+        format: 'yyyy-MM-dd HH:mm:ss'
+    });
+    
+    // VIP状态切换处理
+    form.on('radio(vip_status)', function(data){
+        var vipOffTimeInput = document.getElementById('vip_off_time');
+        if (data.value == '0') {
+            // 选择"未开通"时，禁用VIP时间输入框并清空值
+            vipOffTimeInput.disabled = true;
+            vipOffTimeInput.value = '';
+        } else {
+            // 选择"开通VIP"时，启用VIP时间输入框
+            vipOffTimeInput.disabled = false;
+        }
+    });
+    
+    // 表单提交处理
+    form.on('submit', function(data){
+        var loadIndex = layer.load(2, {shade:[0.3, '#333']});
+        $.ajax({
+            url: "{:url('edit')}",
+            dataType: 'json',
+            data: data.field,
+            success: function (data) {
+                layer.close(loadIndex);
+                if (data.code == 1) {
+                    layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                        // 关闭弹层并刷新父页面
+                        var iframeIndex = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(iframeIndex);
+                        parent.layui.table.reload("currentTableId");
+                    });
+                } else {
+                    layer.msg(data.msg, {icon: 2, time: 1000});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
