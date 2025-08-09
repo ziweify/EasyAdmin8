@@ -26,25 +26,22 @@ class User extends AdminController
     }
 
     /**
-     * 重写获取列表方法，自动更新过期用户状态
+     * 重写获取列表方法，适度更新过期用户状态
      */
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
-            // 强制自动更新过期用户状态
+            // 强制自动更新所有过期和未开通用户状态
             \app\admin\model\GddsUser::autoUpdateStatus();
+            
+            // 强制刷新所有用户状态，确保数据一致性
+            \app\admin\model\GddsUser::forceRefreshAllStatus();
             
             if (input('selectFields')) {
                 return $this->selectList();
             }
             
             list($page, $limit, $where) = $this->buildTableParams();
-            
-            // 先更新状态，再查询数据
-            \app\admin\model\GddsUser::autoUpdateStatus();
-            
-            // 强制刷新所有用户状态，确保数据一致性
-            \app\admin\model\GddsUser::forceRefreshAllStatus();
             
             $count = self::$model::where($where)->count();
             
@@ -57,7 +54,7 @@ class User extends AdminController
                 $order = "{$field} {$direction}";
             }
             
-            // 直接查询，因为状态已经在上面更新过了
+            // 直接查询，避免过度的状态重置
             $query = self::$model::where($where);
             if (!empty($order)) {
                 $query = $query->order($order);
@@ -324,6 +321,124 @@ class User extends AdminController
         }
         
         $this->error('请求方式错误');
+    }
+
+    /**
+     * 重写状态修改方法，处理开关值映射
+     * 开关值：0 -> 禁用(1), 1 -> 启用(2)
+     */
+    public function modify(Request $request): void
+    {
+        $this->checkPostRequest();
+        $post = $request->post();
+        $rule = [
+            'id|ID'      => 'require',
+            'field|字段' => 'require',
+            'value|值'   => 'require',
+        ];
+        $this->validate($post, $rule);
+        
+        // 限制可修改的字段
+        $allowModifyFields = ['status', 'sort', 'remark'];
+        if (!in_array($post['field'], $allowModifyFields)) {
+            $this->error('该字段不允许修改：' . $post['field']);
+        }
+        
+        $row = self::$model::find($post['id']);
+        empty($row) && $this->error('数据不存在');
+        
+        try {
+            // 如果是状态字段，需要处理VIP时间检查
+            if ($post['field'] === 'status') {
+                // 获取用户VIP状态
+                $vipOffTime = $row->getData('vip_off_time');
+                
+                // 记录详细的VIP和状态信息
+                \think\facade\Log::info(sprintf(
+                    '状态修改请求：用户ID=%s, 当前状态=%s, 请求状态=%s, VIP时间=%s',
+                    $post['id'],
+                    $row->getData('status'),
+                    $post['value'],
+                    $vipOffTime
+                ));
+                
+                // 检查是否允许修改状态
+                $canChangeStatus = true;
+                $reason = '';
+                
+                // 如果要启用（状态值=2），需要检查VIP时间
+                if ($post['value'] == 2) {
+                    if (empty($vipOffTime) || $vipOffTime == 0) {
+                        $canChangeStatus = false;
+                        $reason = 'VIP未开通';
+                        $post['value'] = 1; // 强制设置为禁用
+                    } elseif ($vipOffTime < time()) {
+                        $canChangeStatus = false;
+                        $reason = 'VIP已过期';
+                        $post['value'] = 1; // 强制设置为禁用
+                    }
+                }
+                
+                // 记录状态检查结果
+                \think\facade\Log::info(sprintf(
+                    '状态检查结果：允许修改=%s, 原因=%s, 最终状态值=%s',
+                    $canChangeStatus ? 'true' : 'false',
+                    $reason ?: '无限制',
+                    $post['value']
+                ));
+                
+                if (!$canChangeStatus) {
+                    $this->error($reason . '，不能启用账号', [], 0);
+                }
+            }
+            
+            // 记录更新前的状态
+            \think\facade\Log::info(sprintf(
+                '更新前状态：ID=%s, 当前状态=%s, 新状态=%s',
+                $post['id'],
+                $row->getData('status'),
+                $post['value']
+            ));
+            
+            try {
+                // 使用模型更新
+                $updateResult = $row->save([
+                    $post['field'] => $post['value']
+                ]);
+                
+                // 记录更新结果
+                \think\facade\Log::info(sprintf(
+                    '更新结果：成功=%s, SQL=%s',
+                    $updateResult ? 'true' : 'false',
+                    \think\facade\Db::getLastSql()
+                ));
+                
+                // 重新获取并验证更新
+                $afterUpdate = self::$model::find($post['id']);
+                if ($afterUpdate) {
+                    \think\facade\Log::info(sprintf(
+                        '更新后状态：ID=%s, 状态=%s, VIP时间=%s',
+                        $afterUpdate['id'],
+                        $afterUpdate->getData('status'),
+                        $afterUpdate->getData('vip_off_time')
+                    ));
+                    
+                    // 验证更新是否成功
+                    if ($afterUpdate->getData('status') != $post['value']) {
+                        throw new \Exception('状态更新失败，数据库值未改变');
+                    }
+                } else {
+                    throw new \Exception('更新后未找到记录');
+                }
+            } catch (\Exception $e) {
+                \think\facade\Log::error('状态更新异常：' . $e->getMessage());
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            $this->error($e->getMessage());
+        }
+        
+        $this->success('保存成功');
     }
 
 }

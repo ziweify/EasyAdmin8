@@ -6,21 +6,22 @@ use app\common\model\TimeModel;
 
 class GddsUser extends TimeModel
 {
-
+    protected $name = 'gdds_user';
+    protected $table = 'ea8_gdds_user';
+    protected $deleteTime = 'delete_time';
+    
     protected function getOptions(): array
     {
-        return [
-            'name'       => "ea8_gdds_user",
-            'table'      => "ea8_gdds_user",
-            'deleteTime' => "delete_time",
-        ];
+        return array_merge(parent::getOptions(), [
+            'deleteTime' => $this->deleteTime,
+        ]);
     }
 
     public static array $notes = [];
 
     /**
      * 自动检测VIP时间并更新状态
-     * 当VIP时间过期或为空时，自动将状态设置为禁用(1)
+     * 当VIP时间过期或为空时，自动将状态设置为禁用(1)  
      * 当VIP时间有效时，如果状态为禁用且应该启用，则更新为启用(2)
      */
     public static function autoUpdateStatus()
@@ -29,6 +30,18 @@ class GddsUser extends TimeModel
         $updatedCount = 0;
         
         try {
+            // 查询需要更新的数据
+            $debugInfo = [
+                'now' => $now,
+                'expired_users' => self::where('vip_off_time', '<', $now)->where('vip_off_time', '>', 0)->count(),
+                'no_vip_users' => self::where(function($query) {
+                    $query->where('vip_off_time', '=', 0)
+                          ->whereOr('vip_off_time', '=', '')
+                          ->whereOr('vip_off_time', 'is', null);
+                })->count(),
+                'active_users' => self::where('vip_off_time', '>', $now)->count()
+            ];
+            
             // 批量更新VIP时间为0或空的用户状态为禁用
             $count1 = self::where(function($query) {
                     $query->where('vip_off_time', '=', 0)
@@ -51,13 +64,45 @@ class GddsUser extends TimeModel
             
             $updatedCount = $count1 + $count2 + $count3;
             
-            // 记录更新日志（可选）
-            if ($updatedCount > 0) {
-                \think\facade\Log::info("自动更新用户状态完成，共更新 {$updatedCount} 条记录");
+            // 记录详细的更新日志
+            if ($updatedCount > 0 || true) { // 总是记录日志
+                \think\facade\Log::info("自动更新用户状态执行: 未开通用户禁用{$count1}个, 过期用户禁用{$count2}个, 有效用户启用{$count3}个, 共更新{$updatedCount}条记录", $debugInfo);
             }
             
         } catch (\Exception $e) {
             \think\facade\Log::error("自动更新用户状态失败：" . $e->getMessage());
+        }
+        
+        return $updatedCount;
+    }
+
+    /**
+     * 温和的过期状态更新 - 只处理明确过期的情况
+     * 这个方法只更新那些VIP时间明确过期的用户，不会影响"未开通"的用户
+     * 让管理员能够手动控制"未开通"用户的状态
+     */
+    public static function autoUpdateExpiredStatus()
+    {
+        $now = time();
+        $updatedCount = 0;
+        
+        try {
+            // 只更新VIP时间已过期且当前为启用状态的用户
+            // 不处理未开通(vip_off_time=0或null)的情况，允许管理员手动控制这些用户的状态
+            $count = self::where('vip_off_time', '<', $now)
+                ->where('vip_off_time', '>', 0) // 排除未开通的情况 (vip_off_time=0)
+                ->where('status', 2) // 只更新当前启用的用户
+                ->update(['status' => 1]); // 设置为禁用状态
+            
+            $updatedCount = $count;
+            
+            // 记录更新日志
+            if ($updatedCount > 0) {
+                \think\facade\Log::info("温和更新过期用户状态完成，共更新 {$updatedCount} 条记录");
+            }
+            
+        } catch (\Exception $e) {
+            \think\facade\Log::error("温和更新过期用户状态失败：" . $e->getMessage());
         }
         
         return $updatedCount;

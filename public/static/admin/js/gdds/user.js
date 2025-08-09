@@ -8,7 +8,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
         edit_url: "gdds.user/edit",
         delete_url: "gdds.user/delete",
         export_url: "gdds.user/export",
-        modify_url: "gdds.user/modify",
+        modify_url: "gdds.user/modify",  // 使用正确的控制器路径
         recycle_url: "gdds.user/recycle",
     };
 
@@ -45,7 +45,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
     return {
 
         index: function () {
-            ea.table.render({
+            var table = ea.table.render({
                 init: init,
                 cols: [[
                     {type: "checkbox", width: 50},
@@ -58,7 +58,10 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: "api_public_key", width: 150, title: "API公钥", hide: true},
                     {field: "api_private_key", width: 150, title: "API私钥", hide: true},
                     {field: "api_token", width: 150, title: "API令牌"},
-                    {field: "status", width: 85, title: "状态", templet: ea.table.switch},
+                    {field: "status", width: 100, align: "center", unresize: true, title: "状态", templet: function(d) {
+    var checked = d.status === 2 ? 'checked' : '';
+    return '<div style="text-align: center;" data-status="'+d.status+'"><input type="checkbox" name="status" value="'+d.id+'" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" '+checked+' style="margin: 0;"></div>';
+}},
                     {field: "sort", width: 80, title: "排序", edit: "text"},
                     {field: "last_login_time", width: 180, title: "最后登录信息", templet: function(d) {
                         return "<div style=\"line-height: 1.5;\">" + 
@@ -90,6 +93,55 @@ define(["jquery", "easy-admin"], function ($, ea) {
             });
 
             ea.listen();
+            
+            // 监听状态开关操作
+            layui.form.on('switch(status)', function(obj){
+                // 保存开关元素和状态
+                var $switch = $(obj.elem);
+                var isChecked = obj.elem.checked;
+                
+                var data = {
+                    id: obj.value,
+                    field: 'status',
+                    value: isChecked ? 2 : 1  // 修改为正确的状态值：2=启用，1=禁用
+                };
+                
+                // 发送修改请求
+                $.ajax({
+                    url: ea.url(init.modify_url),
+                    data: data,
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(res){
+                        if (res.code === 1) {
+                            layui.layer.msg(res.msg || '保存成功', {icon: 1});
+                            // 更新成功，刷新表格
+                            table.reload(init.table_render_id);
+                        } else {
+                            layui.layer.msg(res.msg || 'VIP未开通或已过期，不能启用账号', {
+                                icon: 2,
+                                time: 2000
+                            });
+                            // 更新失败，恢复开关状态
+                            $switch.prop('checked', !isChecked);
+                            layui.form.render();
+                            // 强制刷新表格
+                            table.reload(init.table_render_id);
+                        }
+                    },
+                    error: function(){
+                        layui.layer.msg('操作失败，请重试', {
+                            icon: 2,
+                            time: 2000
+                        });
+                        // 发生错误，恢复开关状态
+                        $switch.prop('checked', !isChecked);
+                        layui.form.render();
+                        // 强制刷新表格
+                        table.reload(init.table_render_id);
+                    }
+                });
+            });
         },
         add: function () {
             ea.listen();
@@ -135,7 +187,10 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: "api_public_key", width: 150, title: "API公钥", hide: true},
                     {field: "api_private_key", width: 150, title: "API私钥", hide: true},
                     {field: "api_token", width: 150, title: "API令牌"},
-                    {field: "status", width: 85, title: "状态", templet: ea.table.switch},
+                    {field: "status", width: 100, align: "center", unresize: true, title: "状态", templet: function(d) {
+    var checked = d.status === 2 ? 'checked' : '';
+    return '<div style="text-align: center;" data-status="'+d.status+'"><input type="checkbox" name="status" value="'+d.id+'" lay-skin="switch" lay-text="启用|禁用" lay-filter="status" '+checked+' style="margin: 0;"></div>';
+}},
                     {field: "sort", width: 80, title: "排序", edit: "text"},
                     {field: "last_login_time", width: 180, title: "最后登录信息", templet: function(d) {
                         return "<div style=\"line-height: 1.5;\">" + 
