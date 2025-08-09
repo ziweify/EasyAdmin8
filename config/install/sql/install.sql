@@ -22,10 +22,11 @@ CREATE TABLE `ea_gdds_user` (
     `username` varchar(20) NOT NULL COMMENT '用户名',
     `password` varchar(255) NOT NULL COMMENT '密码',
     `soft_version` varchar(255) NOT NULL COMMENT '软件版本',
+    `allow_window` int(11) DEFAULT 1 COMMENT '允许窗口',
     `remark` varchar(255) DEFAULT NULL COMMENT '备注',
     `api_public_key` varchar(255) NOT NULL COMMENT 'API公钥',
     `api_private_key` varchar(255) NOT NULL COMMENT 'API私钥',
-    `api_token` varchar(255) NOT NULL COMMENT 'API令牌',
+    `api_token` varchar(255) NOT NULL COMMENT 'API令牌', /*令牌是用户登录后，在用户中心生成的，用于调用API的凭证，和参数防修改的凭证,allow_window, api_private_key参与计算的结果 */
     `status`      tinyint(1) unsigned DEFAULT '1' COMMENT '状态(1:禁用,2:启用)',
     `sort` int(11) DEFAULT '0' COMMENT '排序',
     `last_login_time` int(11) DEFAULT NULL COMMENT '最后登录时间',
