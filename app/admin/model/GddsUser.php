@@ -21,6 +21,7 @@ class GddsUser extends TimeModel
     /**
      * 自动检测VIP时间并更新状态
      * 当VIP时间过期或为空时，自动将状态设置为禁用(1)
+     * 当VIP时间有效时，如果状态为禁用且应该启用，则更新为启用(2)
      */
     public static function autoUpdateStatus()
     {
@@ -28,7 +29,7 @@ class GddsUser extends TimeModel
         $updatedCount = 0;
         
         try {
-            // 批量更新VIP时间为0或空的用户状态
+            // 批量更新VIP时间为0或空的用户状态为禁用
             $count1 = self::where(function($query) {
                     $query->where('vip_off_time', '=', 0)
                           ->whereOr('vip_off_time', '=', '')
@@ -37,13 +38,18 @@ class GddsUser extends TimeModel
                 ->where('status', 2) // 2表示启用状态
                 ->update(['status' => 1]); // 1表示禁用状态
             
-            // 批量更新VIP时间已过期的用户状态
+            // 批量更新VIP时间已过期的用户状态为禁用
             $count2 = self::where('vip_off_time', '<', $now)
                 ->where('vip_off_time', '>', 0) // 排除vip_off_time为0的情况
                 ->where('status', 2) // 2表示启用状态
                 ->update(['status' => 1]); // 1表示禁用状态
             
-            $updatedCount = $count1 + $count2;
+            // 批量更新VIP时间有效且状态为禁用的用户为启用
+            $count3 = self::where('vip_off_time', '>', $now)
+                ->where('status', 1) // 1表示禁用状态
+                ->update(['status' => 2]); // 2表示启用状态
+            
+            $updatedCount = $count1 + $count2 + $count3;
             
             // 记录更新日志（可选）
             if ($updatedCount > 0) {
@@ -93,10 +99,12 @@ class GddsUser extends TimeModel
         // 先自动更新过期用户状态
         self::autoUpdateStatus();
         
-        // 获取用户信息并检查状态一致性
+        // 获取用户信息
         $user = self::find($id);
+        
+        // 如果用户存在，确保其状态是最新的
         if ($user) {
-            $user->ensureStatusConsistency();
+            $user->updateUserStatus();
         }
         
         return $user;
@@ -133,58 +141,46 @@ class GddsUser extends TimeModel
     }
 
     /**
-     * 确保状态与VIP时间的一致性
-     * 在查询数据时自动调用此方法
+     * 更新单个用户状态
+     * 根据VIP时间自动更新用户状态到数据库
      */
-    public function ensureStatusConsistency()
+    public function updateUserStatus()
     {
-        $vipOffTime = $this->getData('vip_off_time');
         $currentStatus = $this->getData('status');
+        $vipOffTime = $this->getData('vip_off_time');
+        $newStatus = $currentStatus;
         
         // 如果VIP时间为0或空（未开通），状态应该是禁用
         if (empty($vipOffTime) || $vipOffTime == 0) {
-            if ($currentStatus != 1) {
-                $this->set('status', 1);
-                $this->save(['status' => 1]);
-            }
-            return 1;
+            $newStatus = 1; // 禁用状态
         }
-        
         // 如果VIP时间已过期，状态应该是禁用
-        $now = time();
-        if ($vipOffTime < $now) {
-            if ($currentStatus != 1) {
-                $this->set('status', 1);
-                $this->save(['status' => 1]);
-            }
-            return 1;
+        elseif ($vipOffTime < time()) {
+            $newStatus = 1; // 禁用状态
+        }
+        // 如果VIP时间有效，状态应该是启用
+        else {
+            $newStatus = 2; // 启用状态
         }
         
-        return $currentStatus;
+        // 如果状态需要更新，则更新数据库
+        if ($newStatus != $currentStatus) {
+            $this->set('status', $newStatus);
+            $this->save(['status' => $newStatus]);
+        }
+        
+        return $newStatus;
     }
 
 
 
     /**
-     * 状态获取器 - 自动检测VIP时间并返回实际状态
+     * 状态获取器 - 直接返回数据库中的状态值
+     * 因为状态已经在autoUpdateStatus中自动维护，所以直接返回即可
      */
     public function getStatusAttr($value)
     {
-        // 检查VIP时间并返回正确的状态
-        $vipOffTime = $this->getData('vip_off_time');
-        
-        // 如果VIP时间为0或空（未开通），状态应该是禁用
-        if (empty($vipOffTime) || $vipOffTime == 0) {
-            return 1; // 返回禁用状态
-        }
-        
-        // 如果VIP时间已过期，状态应该是禁用
-        $now = time();
-        if ($vipOffTime < $now) {
-            return 1; // 返回禁用状态
-        }
-        
-        // 如果VIP时间有效，返回原始状态
+        // 状态已经在autoUpdateStatus中自动维护，直接返回数据库中的值
         return $value;
     }
 
@@ -200,9 +196,13 @@ class GddsUser extends TimeModel
 
     /**
      * 获取列表时自动检查状态一致性
+     * 在返回数据之前，自动更新所有用户的状态到数据库
      */
     public static function getListWithStatusCheck($where = [], $order = 'id desc', $limit = null, $page = null)
     {
+        // 先自动更新所有用户的状态到数据库
+        self::autoUpdateStatus();
+        
         $query = self::where($where)->order($order);
         
         if ($page && $limit) {
@@ -213,7 +213,8 @@ class GddsUser extends TimeModel
             $list = $query->select();
         }
         
-        // 状态获取器会自动处理状态一致性，无需额外处理
+        // 由于已经更新了数据库，直接返回查询结果即可
+        // 前端显示的就是数据库中的真实状态，无需额外处理
         return $list;
     }
 

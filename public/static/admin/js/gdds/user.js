@@ -46,9 +46,12 @@ define(["jquery", "easy-admin"], function ($, ea) {
                         '</div>';
                     }},
                     {field: "vip_function", width: 150, title: "VIP信息", templet: function(d) {
-                        return "<div style=\"line-height: 1.5;\">" + 
-                               "<div style=\"font-weight: bold;\">权限: " + (d.vip_function || "无") + "</div>" + 
-                               "<div style=\"color: #999; font-size: 12px;\">到期: " + (d.vip_off_time || "未开通") + "</div>" + 
+                        var vipOffTime = d.vip_off_time;
+                        var vipFunction = d.vip_function || "无";
+
+                        return "<div style=\"line-height: 1.5;\">" +
+                               "<div style=\"font-weight: bold;\">权限: " + vipFunction + "</div>" +
+                               "<div style=\"color: #999; font-size: 11px;\">到期: " + (vipOffTime ? new Date(vipOffTime).toLocaleString() : "未开通") + "</div>" +
                                "</div>";
                     }},
                     {field: "create_time", width: 150, title: "创建时间"},
@@ -120,9 +123,12 @@ define(["jquery", "easy-admin"], function ($, ea) {
                                '</div>';
                     }},
                     {field: "vip_function", width: 150, title: "VIP信息", templet: function(d) {
-                        return "<div style=\"line-height: 1.5;\">" + 
-                               "<div style=\"font-weight: bold;\">权限: " + (d.vip_function || "无") + "</div>" + 
-                               "<div style=\"color: #999; font-size: 12px;\">到期: " + (d.vip_off_time || "未开通") + "</div>" + 
+                        var vipOffTime = d.vip_off_time;
+                        var vipFunction = d.vip_function || "无";
+
+                        return "<div style=\"line-height: 1.5;\">" +
+                               "<div style=\"font-weight: bold;\">权限: " + vipFunction + "</div>" +
+                               "<div style=\"color: #999; font-size: 11px;\">到期: " + (vipOffTime ? new Date(vipOffTime).toLocaleString() : "未开通") + "</div>" +
                                "</div>";
                     }},
                     {field: "create_time", width: 150, title: "创建时间"},
