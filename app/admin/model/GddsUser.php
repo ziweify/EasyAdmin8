@@ -111,17 +111,13 @@ class GddsUser extends TimeModel
     }
 
     /**
-     * VIP时间获取器 - 格式化显示
+     * VIP时间获取器 - 返回原始时间戳，用于前端JavaScript处理
+     * 前端需要时间戳来正确显示日期，而不是格式化后的字符串
      */
     public function getVipOffTimeAttr($value)
     {
-        if (empty($value) || $value == 0) {
-            return '未开通';
-        }
-        // 如果是时间戳，转换为可读的日期时间格式
-        if (is_numeric($value)) {
-            return date('Y-m-d H:i:s', $value);
-        }
+        // 直接返回原始值，让前端处理格式化
+        // 这样可以避免"invalid date"的问题
         return $value;
     }
 
@@ -172,8 +168,6 @@ class GddsUser extends TimeModel
         return $newStatus;
     }
 
-
-
     /**
      * 状态获取器 - 直接返回数据库中的状态值
      * 因为状态已经在autoUpdateStatus中自动维护，所以直接返回即可
@@ -216,6 +210,43 @@ class GddsUser extends TimeModel
         // 由于已经更新了数据库，直接返回查询结果即可
         // 前端显示的就是数据库中的真实状态，无需额外处理
         return $list;
+    }
+
+    /**
+     * 获取VIP时间显示格式 - 用于前端显示
+     * 这个方法专门为前端提供格式化的VIP时间显示
+     */
+    public function getVipOffTimeDisplayAttr()
+    {
+        $vipOffTime = $this->getData('vip_off_time');
+        if (empty($vipOffTime) || $vipOffTime == 0) {
+            return '未开通';
+        }
+        // 如果是时间戳，转换为可读的日期时间格式
+        if (is_numeric($vipOffTime)) {
+            return date('Y-m-d H:i:s', $vipOffTime);
+        }
+        return $vipOffTime;
+    }
+
+    /**
+     * 强制刷新所有用户状态
+     * 这个方法会强制更新所有用户的状态到数据库
+     */
+    public static function forceRefreshAllStatus()
+    {
+        $users = self::select();
+        $updatedCount = 0;
+        
+        foreach ($users as $user) {
+            $oldStatus = $user->getData('status');
+            $newStatus = $user->updateUserStatus();
+            if ($oldStatus != $newStatus) {
+                $updatedCount++;
+            }
+        }
+        
+        return $updatedCount;
     }
 
     public function login($name, $pwd)

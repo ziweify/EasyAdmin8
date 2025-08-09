@@ -12,6 +12,36 @@ define(["jquery", "easy-admin"], function ($, ea) {
         recycle_url: "gdds.user/recycle",
     };
 
+    // 格式化VIP时间的辅助函数
+    function formatVipTime(vipOffTime) {
+        if (!vipOffTime || vipOffTime == 0 || vipOffTime == '0') {
+            return '未开通';
+        }
+        
+        // 确保是数字类型的时间戳
+        var timestamp = parseInt(vipOffTime);
+        if (isNaN(timestamp) || timestamp <= 0) {
+            return '未开通';
+        }
+        
+        try {
+            var date = new Date(timestamp * 1000); // 转换为毫秒
+            if (isNaN(date.getTime())) {
+                return '时间格式错误';
+            }
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        } catch (e) {
+            return '时间格式错误';
+        }
+    }
+
     return {
 
         index: function () {
@@ -51,7 +81,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
 
                         return "<div style=\"line-height: 1.5;\">" +
                                "<div style=\"font-weight: bold;\">权限: " + vipFunction + "</div>" +
-                               "<div style=\"color: #999; font-size: 11px;\">到期: " + (vipOffTime ? new Date(vipOffTime).toLocaleString() : "未开通") + "</div>" +
+                               "<div style=\"color: #999; font-size: 11px;\">到期: " + formatVipTime(vipOffTime) + "</div>" +
                                "</div>";
                     }},
                     {field: "create_time", width: 150, title: "创建时间"},
@@ -110,7 +140,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: "last_login_time", width: 180, title: "最后登录信息", templet: function(d) {
                         return "<div style=\"line-height: 1.5;\">" + 
                                "<div style=\"font-weight: bold;\">" + (d.last_login_time || "未登录") + "</div>" + 
-                               "<div style=\"color: #999; font-size: 12px;\">" + (d.last_login_ip || "无IP记录") + "</div>" + 
+                               "<div style=\"color: #666; font-size: 12px;\">" + (d.last_login_ip || "无IP记录") + "</div>" + 
                                "</div>";
                     }},
                     {field: "carday_consumption", width: 150, title: "消费:月|周|日", templet: function(d) {
@@ -128,7 +158,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
 
                         return "<div style=\"line-height: 1.5;\">" +
                                "<div style=\"font-weight: bold;\">权限: " + vipFunction + "</div>" +
-                               "<div style=\"color: #999; font-size: 11px;\">到期: " + (vipOffTime ? new Date(vipOffTime).toLocaleString() : "未开通") + "</div>" +
+                               "<div style=\"color: #999; font-size: 11px;\">到期: " + formatVipTime(vipOffTime) + "</div>" +
                                "</div>";
                     }},
                     {field: "create_time", width: 150, title: "创建时间"},

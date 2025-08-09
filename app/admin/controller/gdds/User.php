@@ -31,7 +31,7 @@ class User extends AdminController
     public function index(Request $request): Json|string
     {
         if ($request->isAjax()) {
-            // 自动更新过期用户状态
+            // 强制自动更新过期用户状态
             \app\admin\model\GddsUser::autoUpdateStatus();
             
             if (input('selectFields')) {
@@ -39,6 +39,13 @@ class User extends AdminController
             }
             
             list($page, $limit, $where) = $this->buildTableParams();
+            
+            // 先更新状态，再查询数据
+            \app\admin\model\GddsUser::autoUpdateStatus();
+            
+            // 强制刷新所有用户状态，确保数据一致性
+            \app\admin\model\GddsUser::forceRefreshAllStatus();
+            
             $count = self::$model::where($where)->count();
             
             // 使用模型的方法自动处理状态一致性
@@ -49,7 +56,19 @@ class User extends AdminController
                 $direction = $sort[$field];
                 $order = "{$field} {$direction}";
             }
-            $list = self::$model::getListWithStatusCheck($where, $order, $limit, $page);
+            
+            // 直接查询，因为状态已经在上面更新过了
+            $query = self::$model::where($where);
+            if (!empty($order)) {
+                $query = $query->order($order);
+            }
+            if ($page && $limit) {
+                $list = $query->page($page, $limit)->select();
+            } elseif ($limit) {
+                $list = $query->limit($limit)->select();
+            } else {
+                $list = $query->select();
+            }
             
             $data = [
                 'code'  => 0,
@@ -112,28 +131,21 @@ class User extends AdminController
             $this->validate($post, $rule, $message);
             
             try {
-                // 处理VIP状态逻辑
-                if (isset($post['vip_status'])) {
-                    if ($post['vip_status'] == '0') {
-                        // 未开通VIP
-                        $post['vip_off_time'] = 0;
-                        $post['status'] = 1; // 强制设置为禁用状态
-                    } else {
-                        // 开通VIP，验证时间
-                        if (empty($post['vip_off_time'])) {
-                            $this->error('请选择VIP到期时间');
-                        }
-                        $vipTime = strtotime($post['vip_off_time']);
-                        if ($vipTime === false) {
-                            $this->error('VIP时间格式不正确');
-                        }
-                        if ($vipTime <= time()) {
-                            $this->error('VIP到期时间不能是过去的时间');
-                        }
-                        $post['vip_off_time'] = $vipTime;
-                        $post['status'] = 2; // 设置为启用状态
+                // 处理VIP时间逻辑，自动设置状态
+                if (!empty($post['vip_off_time'])) {
+                    $vipTime = strtotime($post['vip_off_time']);
+                    if ($vipTime === false) {
+                        $this->error('VIP时间格式不正确');
                     }
-                    unset($post['vip_status']); // 移除临时字段
+                    if ($vipTime <= time()) {
+                        $this->error('VIP到期时间不能是过去的时间');
+                    }
+                    $post['vip_off_time'] = $vipTime;
+                    $post['status'] = 2; // 设置为启用状态
+                } else {
+                    // 没有VIP时间，设置为禁用状态
+                    $post['vip_off_time'] = 0;
+                    $post['status'] = 1; // 设置为禁用状态
                 }
                 
                 // 设置默认值
@@ -217,28 +229,21 @@ class User extends AdminController
             $this->validate($post, $rule, $message);
             
             try {
-                // 处理VIP状态逻辑
-                if (isset($post['vip_status'])) {
-                    if ($post['vip_status'] == '0') {
-                        // 未开通VIP
-                        $post['vip_off_time'] = 0;
-                        $post['status'] = 1; // 强制设置为禁用状态
-                    } else {
-                        // 开通VIP，验证时间
-                        if (empty($post['vip_off_time'])) {
-                            $this->error('请选择VIP到期时间');
-                        }
-                        $vipTime = strtotime($post['vip_off_time']);
-                        if ($vipTime === false) {
-                            $this->error('VIP时间格式不正确');
-                        }
-                        if ($vipTime <= time()) {
-                            $this->error('VIP到期时间不能是过去的时间');
-                        }
-                        $post['vip_off_time'] = $vipTime;
-                        $post['status'] = 2; // 设置为启用状态
+                // 处理VIP时间逻辑，自动设置状态
+                if (!empty($post['vip_off_time'])) {
+                    $vipTime = strtotime($post['vip_off_time']);
+                    if ($vipTime === false) {
+                        $this->error('VIP时间格式不正确');
                     }
-                    unset($post['vip_status']); // 移除临时字段
+                    if ($vipTime <= time()) {
+                        $this->error('VIP到期时间不能是过去的时间');
+                    }
+                    $post['vip_off_time'] = $vipTime;
+                    $post['status'] = 2; // 设置为启用状态
+                } else {
+                    // 没有VIP时间，设置为禁用状态
+                    $post['vip_off_time'] = 0;
+                    $post['status'] = 1; // 设置为禁用状态
                 }
                 
                 \think\facade\Db::transaction(function() use ($post, $row, &$save) {

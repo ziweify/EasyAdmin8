@@ -52,6 +52,19 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label">VIP权限</label>
+            <div class="layui-input-block">
+                <input type="text" name="vip_function" class="layui-input" placeholder="请输入VIP权限" value="{$row.vip_function|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">VIP到期时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="vip_off_time" class="layui-input" id="vip_off_time" placeholder="请选择VIP到期时间，留空表示未开通" value="{if condition='$row.vip_off_time && $row.vip_off_time > 0 && is_numeric($row.vip_off_time)'}{:date('Y-m-d H:i:s', $row.vip_off_time)}{/if}">
+                <div class="layui-form-mid layui-word-aux">设置VIP到期时间后，用户状态将自动设置为启用；过期后状态将自动设置为禁用</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
                 <input type="radio" name="status" value="1" title="禁用" {if condition="$row.status == 1"}checked{/if}>
@@ -98,23 +111,6 @@
                 <div class="layui-form-mid layui-word-aux">消费次数，每次+1递增</div>
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">VIP权限</label>
-            <div class="layui-input-block">
-                <input type="text" name="vip_function" class="layui-input" placeholder="请输入VIP权限" value="{$row.vip_function|default=''}">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">VIP状态</label>
-            <div class="layui-input-block">
-                <input type="radio" name="vip_status" value="1" title="开通VIP" lay-filter="vip_status" {if condition="$row.vip_off_time && $row.vip_off_time > 0"}checked{/if}>
-                <input type="radio" name="vip_status" value="0" title="未开通" lay-filter="vip_status" {if condition="!$row.vip_off_time || $row.vip_off_time == 0"}checked{/if}>
-                <div style="margin-top: 10px;">
-                    <input type="text" name="vip_off_time" class="layui-input" id="vip_off_time" lay-verify="required" placeholder="请选择VIP到期时间" value="{if condition='$row.vip_off_time && $row.vip_off_time > 0 && is_numeric($row.vip_off_time)'}{:date('Y-m-d H:i:s', $row.vip_off_time)}{elseif condition='$row.vip_off_time && $row.vip_off_time == 0'}{$row.vip_off_time}{/if}" {if condition="!$row.vip_off_time || $row.vip_off_time == 0"}disabled{/if}>
-                </div>
-                <div class="layui-form-mid layui-word-aux">VIP过期后用户状态将自动设置为禁用</div>
-            </div>
-        </div>
         <div class="hr-line"></div>
         <div class="layui-form-item text-center">
             <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
@@ -134,29 +130,6 @@ layui.use(['form', 'laydate'], function(){
         type: 'datetime',
         format: 'yyyy-MM-dd HH:mm:ss',
         min: 0 // 不允许选择过去的时间
-    });
-    
-    // VIP状态切换处理
-    form.on('radio(vip_status)', function(data){
-        var vipOffTimeInput = document.getElementById('vip_off_time');
-        if (data.value == '0') {
-            // 选择"未开通"时，禁用VIP时间输入框并清空值
-            vipOffTimeInput.disabled = true;
-            vipOffTimeInput.value = '';
-        } else {
-            // 选择"开通VIP"时，启用VIP时间输入框
-            vipOffTimeInput.disabled = false;
-            // 如果当前没有设置时间，默认设置为当前时间+30天
-            if (!vipOffTimeInput.value) {
-                var now = new Date();
-                now.setDate(now.getDate() + 30);
-                vipOffTimeInput.value = now.getFullYear() + '-' + 
-                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-                    String(now.getDate()).padStart(2, '0') + ' ' + 
-                    String(now.getHours()).padStart(2, '0') + ':' + 
-                    String(now.getMinutes()).padStart(2, '0') + ':00';
-            }
-        }
     });
     
     // 表单提交处理
@@ -213,9 +186,12 @@ layui.use(['form', 'laydate'], function(){
         }
         
         // 验证VIP时间
-        if (field.vip_status == '1' && !field.vip_off_time) {
-            layer.msg('请选择VIP到期时间', {icon: 2, time: 2000});
-            return false;
+        if (field.vip_off_time) {
+            var vipOffTime = new Date(field.vip_off_time).getTime();
+            if (vipOffTime < Date.now()) {
+                layer.msg('VIP到期时间不能早于当前时间', {icon: 2, time: 2000});
+                return false;
+            }
         }
         
         return true;
