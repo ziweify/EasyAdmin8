@@ -132,53 +132,42 @@ layui.use(['form', 'laydate'], function(){
         min: 0 // 不允许选择过去的时间
     });
     
-    // 表单提交处理
-    form.on('submit', function(data){
-        // 表单验证
-        if (!validateForm(data.field)) {
-            return false;
-        }
-        
-        // 处理VIP时间格式
-        if (data.field.vip_off_time) {
-            var vipTime = new Date(data.field.vip_off_time);
-            if (!isNaN(vipTime.getTime())) {
-                // 转换为时间戳（秒）
-                data.field.vip_off_time = Math.floor(vipTime.getTime() / 1000);
-            } else {
-                layer.msg('VIP时间格式不正确', {icon: 2, time: 2000});
+    // 使用RequireJS加载EasyAdmin模块
+    require(['easy-admin'], function(ea) {
+        // 使用EasyAdmin框架标准方式处理表单提交前的数据预处理
+        form.on("submit", function (data) {
+            // 表单验证
+            if (!validateForm(data.field)) {
                 return false;
             }
-        } else {
-            // 未设置VIP时间，设为0
-            data.field.vip_off_time = 0;
-        }
-        
-        var loadIndex = layer.load(2, {shade:[0.3, '#333']});
-        $.ajax({
-            url: "{:url('edit')}",
-            type: 'post',
-            dataType: 'json',
-            data: data.field,
-            success: function (res) {
-                layer.close(loadIndex);
-                if (res.code == 1) {
-                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
-                        // 关闭弹层并刷新父页面
-                        var iframeIndex = parent.layer.getFrameIndex(window.name);
-                        parent.layer.close(iframeIndex);
-                        parent.layui.table.reload("currentTableId");
-                    });
+            
+            // 处理VIP时间格式转换
+            if (data.field.vip_off_time && data.field.vip_off_time.trim() !== '') {
+                var vipTime = new Date(data.field.vip_off_time);
+                if (!isNaN(vipTime.getTime())) {
+                    // 转换为时间戳（秒）
+                    data.field.vip_off_time = Math.floor(vipTime.getTime() / 1000);
                 } else {
-                    layer.msg(res.msg || 'VIP时间格式不正确', {icon: 2, time: 2000});
+                    layer.msg('VIP时间格式不正确', {icon: 2, time: 2000});
+                    return false;
                 }
-            },
-            error: function(xhr, status, error) {
-                layer.close(loadIndex);
-                layer.msg('网络错误，请稍后重试', {icon: 2, time: 2000});
+            } else {
+                // 未设置VIP时间，设为0
+                data.field.vip_off_time = 0;
             }
         });
-        return false;
+        
+        // 使用EasyAdmin框架标准方式处理表单提交结果
+        ea.listen('', function (res) {
+            layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                // 关闭弹层并刷新父页面
+                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(iframeIndex);
+                parent.layui.table.reload("currentTableId");
+            });
+        }, function (err) {
+            layer.msg(err.msg || '保存失败', {icon: 2, time: 2000});
+        });
     });
     
     // 表单验证函数

@@ -174,11 +174,22 @@ class GddsUser extends TimeModel
         if (empty($value) || $value == '未开通') {
             return 0; // 设置为0表示未开通
         }
-        // 验证日期时间格式并转换为时间戳
-        if (strtotime($value) === false) {
+        
+        // 如果已经是数字时间戳，直接返回
+        if (is_numeric($value)) {
+            $timestamp = intval($value);
+            if ($timestamp > 0) {
+                return $timestamp;
+            }
+        }
+        
+        // 尝试解析日期时间字符串
+        $timestamp = strtotime($value);
+        if ($timestamp === false) {
             throw new \Exception('VIP时间格式不正确');
         }
-        return strtotime($value); // 转换为时间戳
+        
+        return $timestamp;
     }
 
     /**

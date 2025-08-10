@@ -230,27 +230,65 @@ class User extends AdminController
                 \think\facade\Log::info('VIP时间处理调试：', [
                     'raw_vip_off_time' => $post['vip_off_time'] ?? null,
                     'is_empty' => empty($post['vip_off_time']),
-                    'value_type' => gettype($post['vip_off_time'] ?? null)
+                    'value_type' => gettype($post['vip_off_time'] ?? null),
+                    'post_data' => $post,
+                    'user_id' => $id
                 ]);
                 
-                if (!empty($post['vip_off_time'])) {
-                    $vipTime = intval($post['vip_off_time']);
-                    \think\facade\Log::info('VIP时间转换结果：', [
-                        'original' => $post['vip_off_time'],
-                        'converted' => $vipTime,
-                        'current_time' => time()
+                if (!empty($post['vip_off_time']) && $post['vip_off_time'] !== '0') {
+                    // 简化的VIP时间验证逻辑
+                    $vipTime = $post['vip_off_time'];
+                    
+                    \think\facade\Log::info('后端调试 - 接收到的VIP时间数据：', [
+                        'original_value' => $vipTime,
+                        'type' => gettype($vipTime),
+                        'is_numeric' => is_numeric($vipTime),
+                        'is_string' => is_string($vipTime)
                     ]);
                     
+                    // 统一处理：先转为整数时间戳
+                    if (is_numeric($vipTime)) {
+                        $vipTime = intval($vipTime);
+                    } else {
+                        // 如果不是数字，尝试字符串解析
+                        $vipTime = strtotime($vipTime);
+                        if ($vipTime === false) {
+                            \think\facade\Log::error('VIP时间格式错误：无法解析', [
+                                'original' => $post['vip_off_time']
+                            ]);
+                            $this->error('VIP时间格式不正确');
+                        }
+                    }
+                    
+                    \think\facade\Log::info('后端调试 - VIP时间转换结果：', [
+                        'original' => $post['vip_off_time'],
+                        'converted' => $vipTime,
+                        'current_time' => time(),
+                        'is_future' => $vipTime > time()
+                    ]);
+                    
+                    // 验证时间戳有效性
                     if ($vipTime <= 0) {
-                        \think\facade\Log::error('VIP时间格式错误：转换后的值小于等于0', [
-                            'original' => $post['vip_off_time'],
-                            'converted' => $vipTime
+                        \think\facade\Log::error('VIP时间无效：时间戳为0或负数', [
+                            'converted' => $vipTime,
+                            'original' => $post['vip_off_time']
                         ]);
                         $this->error('VIP时间格式不正确');
                     }
-                    if ($vipTime <= time()) {
+                    
+                    // 检查是否是未来时间（允许等于当前时间，给一些容错）
+                    $currentTime = time();
+                    if ($vipTime < $currentTime) {
+                        \think\facade\Log::error('VIP时间是过去时间', [
+                            'vip_time' => $vipTime,
+                            'current_time' => $currentTime,
+                            'vip_date' => date('Y-m-d H:i:s', $vipTime),
+                            'current_date' => date('Y-m-d H:i:s', $currentTime)
+                        ]);
                         $this->error('VIP到期时间不能是过去的时间');
                     }
+                    
+                    $post['vip_off_time'] = $vipTime;
                     $post['status'] = 2; // 设置为启用状态
                 } else {
                     // 没有VIP时间，设置为禁用状态
