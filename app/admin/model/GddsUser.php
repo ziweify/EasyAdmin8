@@ -57,16 +57,14 @@ class GddsUser extends TimeModel
                 ->where('status', 2) // 2表示启用状态
                 ->update(['status' => 1]); // 1表示禁用状态
             
-            // 批量更新VIP时间有效且状态为禁用的用户为启用
-            $count3 = self::where('vip_off_time', '>', $now)
-                ->where('status', 1) // 1表示禁用状态
-                ->update(['status' => 2]); // 2表示启用状态
+            // 不再自动将VIP有效的禁用用户改为启用，允许管理员手动控制
+            $count3 = 0; // 移除自动启用逻辑
             
             $updatedCount = $count1 + $count2 + $count3;
             
             // 记录详细的更新日志
             if ($updatedCount > 0 || true) { // 总是记录日志
-                \think\facade\Log::info("自动更新用户状态执行: 未开通用户禁用{$count1}个, 过期用户禁用{$count2}个, 有效用户启用{$count3}个, 共更新{$updatedCount}条记录", $debugInfo);
+                \think\facade\Log::info("自动更新用户状态执行: 未开通用户禁用{$count1}个, 过期用户禁用{$count2}个, 共更新{$updatedCount}条记录", $debugInfo);
             }
             
         } catch (\Exception $e) {
@@ -194,34 +192,37 @@ class GddsUser extends TimeModel
 
     /**
      * 更新单个用户状态
-     * 根据VIP时间自动更新用户状态到数据库
+     * 只在VIP时间过期时自动将状态改为禁用
      */
     public function updateUserStatus()
     {
         $currentStatus = $this->getData('status');
         $vipOffTime = $this->getData('vip_off_time');
-        $newStatus = $currentStatus;
         
-        // 如果VIP时间为0或空（未开通），状态应该是禁用
-        if (empty($vipOffTime) || $vipOffTime == 0) {
-            $newStatus = 1; // 禁用状态
-        }
-        // 如果VIP时间已过期，状态应该是禁用
-        elseif ($vipOffTime < time()) {
-            $newStatus = 1; // 禁用状态
-        }
-        // 如果VIP时间有效，状态应该是启用
-        else {
-            $newStatus = 2; // 启用状态
+        // 只在以下情况自动更新状态：
+        // 1. 当前状态为启用(2)
+        // 2. VIP时间已过期或未设置
+        if ($currentStatus == 2) {
+            $shouldDisable = false;
+            
+            // VIP时间为0或空，表示未开通
+            if (empty($vipOffTime) || $vipOffTime == 0) {
+                $shouldDisable = true;
+            }
+            // VIP时间已过期
+            elseif ($vipOffTime < time()) {
+                $shouldDisable = true;
+            }
+            
+            // 只有需要禁用时才更新状态
+            if ($shouldDisable) {
+                $this->set('status', 1);
+                $this->save(['status' => 1]);
+                return 1; // 返回新状态
+            }
         }
         
-        // 如果状态需要更新，则更新数据库
-        if ($newStatus != $currentStatus) {
-            $this->set('status', $newStatus);
-            $this->save(['status' => $newStatus]);
-        }
-        
-        return $newStatus;
+        return $currentStatus; // 返回当前状态
     }
 
     /**

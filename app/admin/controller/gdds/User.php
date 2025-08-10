@@ -138,11 +138,17 @@ class User extends AdminController
                         $this->error('VIP到期时间不能是过去的时间');
                     }
                     $post['vip_off_time'] = $vipTime;
-                    $post['status'] = 2; // 设置为启用状态
+                    // 只在用户没有明确选择状态时，才自动设置为启用
+                    if (!isset($post['status']) || $post['status'] === '') {
+                        $post['status'] = 2; // 默认设置为启用状态
+                    }
                 } else {
-                    // 没有VIP时间，设置为禁用状态
+                    // 没有VIP时间，设置为0
                     $post['vip_off_time'] = 0;
-                    $post['status'] = 1; // 设置为禁用状态
+                    // 只在用户没有明确选择状态时，才自动设置为禁用
+                    if (!isset($post['status']) || $post['status'] === '') {
+                        $post['status'] = 1; // 默认设置为禁用状态
+                    }
                 }
                 
                 // 设置默认值
@@ -289,11 +295,12 @@ class User extends AdminController
                     }
                     
                     $post['vip_off_time'] = $vipTime;
-                    $post['status'] = 2; // 设置为启用状态
+                    // 只在用户没有明确选择状态时，才自动设置为启用
+                    // 如果用户已经选择了状态（包括禁用），则保持用户选择
                 } else {
-                    // 没有VIP时间，设置为禁用状态
+                    // 没有VIP时间，设置为0
                     $post['vip_off_time'] = 0;
-                    $post['status'] = 1; // 设置为禁用状态
+                    // 只在用户没有明确选择状态时，才自动设置为禁用
                 }
                 
                 // 记录调试信息
