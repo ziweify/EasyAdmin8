@@ -139,22 +139,38 @@ layui.use(['form', 'laydate'], function(){
             return false;
         }
         
+        // 处理VIP时间格式
+        if (data.field.vip_off_time) {
+            var vipTime = new Date(data.field.vip_off_time);
+            if (!isNaN(vipTime.getTime())) {
+                // 转换为时间戳（秒）
+                data.field.vip_off_time = Math.floor(vipTime.getTime() / 1000);
+            } else {
+                layer.msg('VIP时间格式不正确', {icon: 2, time: 2000});
+                return false;
+            }
+        } else {
+            // 未设置VIP时间，设为0
+            data.field.vip_off_time = 0;
+        }
+        
         var loadIndex = layer.load(2, {shade:[0.3, '#333']});
         $.ajax({
             url: "{:url('edit')}",
+            type: 'post',
             dataType: 'json',
             data: data.field,
-            success: function (data) {
+            success: function (res) {
                 layer.close(loadIndex);
-                if (data.code == 1) {
-                    layer.msg(data.msg, {icon: 1, time: 1000}, function () {
+                if (res.code == 1) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
                         // 关闭弹层并刷新父页面
                         var iframeIndex = parent.layer.getFrameIndex(window.name);
                         parent.layer.close(iframeIndex);
                         parent.layui.table.reload("currentTableId");
                     });
                 } else {
-                    layer.msg(data.msg, {icon: 2, time: 2000});
+                    layer.msg(res.msg || 'VIP时间格式不正确', {icon: 2, time: 2000});
                 }
             },
             error: function(xhr, status, error) {

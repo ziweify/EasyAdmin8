@@ -227,21 +227,43 @@ class User extends AdminController
             
             try {
                 // 处理VIP时间逻辑，自动设置状态
+                \think\facade\Log::info('VIP时间处理调试：', [
+                    'raw_vip_off_time' => $post['vip_off_time'] ?? null,
+                    'is_empty' => empty($post['vip_off_time']),
+                    'value_type' => gettype($post['vip_off_time'] ?? null)
+                ]);
+                
                 if (!empty($post['vip_off_time'])) {
-                    $vipTime = strtotime($post['vip_off_time']);
-                    if ($vipTime === false) {
+                    $vipTime = intval($post['vip_off_time']);
+                    \think\facade\Log::info('VIP时间转换结果：', [
+                        'original' => $post['vip_off_time'],
+                        'converted' => $vipTime,
+                        'current_time' => time()
+                    ]);
+                    
+                    if ($vipTime <= 0) {
+                        \think\facade\Log::error('VIP时间格式错误：转换后的值小于等于0', [
+                            'original' => $post['vip_off_time'],
+                            'converted' => $vipTime
+                        ]);
                         $this->error('VIP时间格式不正确');
                     }
                     if ($vipTime <= time()) {
                         $this->error('VIP到期时间不能是过去的时间');
                     }
-                    $post['vip_off_time'] = $vipTime;
                     $post['status'] = 2; // 设置为启用状态
                 } else {
                     // 没有VIP时间，设置为禁用状态
                     $post['vip_off_time'] = 0;
                     $post['status'] = 1; // 设置为禁用状态
                 }
+                
+                // 记录调试信息
+                \think\facade\Log::info('保存用户数据：', [
+                    'vip_off_time' => $post['vip_off_time'],
+                    'status' => $post['status'],
+                    'current_time' => time()
+                ]);
                 
                 \think\facade\Db::transaction(function() use ($post, $row, &$save) {
                     $save = $row->save($post);
