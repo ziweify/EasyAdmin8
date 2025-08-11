@@ -8,12 +8,13 @@ class BssjTwbg extends TimeModel
 {
     // 设置主键字段为 issueid
     protected $pk = 'issueid';
-
+    
+    // 设置数据表名（不带前缀）
+    protected $name = 'bssj_twbg';
+    
     protected function getOptions(): array
     {
         return [
-            'name'       => "bssj_twbg",
-            'table'      => "",
             'deleteTime' => "delete_time",
         ];
     }

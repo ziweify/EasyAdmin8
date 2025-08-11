@@ -27,8 +27,32 @@ class TwbgLib
         $openData = str_replace([' ', '"'], '', $openData);
         // 分割数字
         $numbers = explode(',', $openData);
-        // 确保至少有5个数字
-        $result = array_pad(array_slice($numbers, 0, 5), 5, '00');
+        $result = [];
+        
+        // 处理前5个数字
+        $count = 0;
+        foreach ($numbers as $number) {
+            if ($count >= 5) break;
+            
+            // 清理数字
+            $number = trim($number);
+            // 确保是两位数格式
+            if (strlen($number) == 1) {
+                $number = '0' . $number;
+            }
+            // 验证是否为有效数字
+            if (!preg_match('/^\d{2}$/', $number)) {
+                $number = '00';
+            }
+            
+            $result[] = $number;
+            $count++;
+        }
+        
+        // 确保有5个数字
+        while (count($result) < 5) {
+            $result[] = '00';
+        }
         
         return $result;
     }

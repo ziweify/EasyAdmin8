@@ -13,6 +13,10 @@ define(["jquery", "easy-admin"], function ($, ea) {
     };
 
     return {
+        // 导入页面
+        import: function () {
+            ea.listen();
+        },
 
         index: function () {
             ea.table.render({

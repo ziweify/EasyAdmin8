@@ -33,18 +33,17 @@
 </div>
 
 <script>
-layui.use(['form', 'table', 'layer'], function () {
+layui.use(['form', 'table', 'layer', 'util'], function () {
     var $ = layui.jquery;
     var form = layui.form;
     var table = layui.table;
     var layer = layui.layer;
-    
-    // 解析数据表格实例
-    var parseTableIns;
+    var util = layui.util;
     
     // 初始化解析表格
-    parseTableIns = table.render({
+    var parseTable = table.render({
         elem: '#parseTable',
+        id: 'parseTable',
         data: [],
         page: false,
         cols: [[
@@ -57,6 +56,22 @@ layui.use(['form', 'table', 'layer'], function () {
             {field: 'p5', title: 'P5', width: 80},
             {field: 'open_time', title: '开奖时间', width: 180, templet: function(d){
                 return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm:ss') : '';
+            }},
+            {field: 'import_status', title: '导入状态', width: 120, templet: function(d){
+                if(!d.import_status) return '';
+                var statusClass = {
+                    'success': 'layui-bg-green',
+                    'exists': 'layui-bg-orange',
+                    'failed': 'layui-bg-red'
+                };
+                var statusText = {
+                    'success': '成功',
+                    'exists': '已存在',
+                    'failed': '失败'
+                };
+                return '<span class="layui-badge ' + (statusClass[d.import_status] || '') + '">' + 
+                       (statusText[d.import_status] || d.import_status) + 
+                       (d.error_msg ? ': ' + d.error_msg : '') + '</span>';
             }}
         ]]
     });
@@ -69,20 +84,24 @@ layui.use(['form', 'table', 'layer'], function () {
             return;
         }
         
+        // 获取当前表格数据
+        var currentData = table.cache['parseTable'] || [];
+        
         // 发送到后端解析
         $.ajax({
             url: window.location.href,
             type: 'POST',
             data: {
                 action: 'parse',
-                rawData: rawData
+                rawData: rawData,
+                existingData: JSON.stringify(currentData)
             },
             dataType: 'json',
             success: function(res){
                 console.log('Parse response:', res); // 调试日志
                 if(res.code == 1){
                     // 更新表格数据
-                    parseTableIns.reload({
+                    table.reload('parseTable', {
                         data: res.data
                     });
                     // 显示确认导入按钮
@@ -101,27 +120,88 @@ layui.use(['form', 'table', 'layer'], function () {
     // 确认导入按钮点击事件
     $('#confirmImport').click(function(){
         var loadIndex = layer.load(2);
-        var tableData = parseTableIns.getData();
+        
+        // 获取当前表格数据
+        var tableData = table.cache['parseTable'] || [];
+        
+        // 过滤掉已经成功导入的数据
+        var dataToImport = tableData.filter(function(item) {
+            return !item.import_status || item.import_status !== 'success';
+        });
+        
+        if(dataToImport.length === 0) {
+            layer.close(loadIndex);
+            layer.msg('没有新数据需要导入', {icon: 0});
+            return;
+        }
         
         $.ajax({
             url: window.location.href,
             type: 'POST',
             data: {
                 action: 'import',
-                data: JSON.stringify(tableData)
+                data: JSON.stringify(dataToImport)
             },
             dataType: 'json',
             success: function(res){
                 layer.close(loadIndex);
                 if(res.code == 1){
-                    layer.msg(res.msg, {icon: 1, time: 1000}, function(){
-                        var iframeIndex = parent.layer.getFrameIndex(window.name);
-                        parent.layer.close(iframeIndex);
-                        parent.layui.table.reload("currentTableId");
+                    // 更新表格中的导入状态
+                    var newData = tableData.map(function(item) {
+                        var result = res.data.find(r => r.issueid === item.issueid);
+                        if(result) {
+                            return {
+                                ...item,
+                                import_status: result.status,
+                                error_msg: result.error_msg
+                            };
+                        }
+                        return item;
                     });
+                    
+                    // 更新表格
+                    table.reload('parseTable', {
+                        data: newData
+                    });
+                    
+                    // 显示成功消息
+                    layer.msg(res.msg, {icon: 1});
+                    
+                    // 如果全部导入成功，则关闭窗口并刷新父页面
+                    var allSuccess = newData.every(item => item.import_status === 'success');
+                    if(allSuccess) {
+                        setTimeout(function(){
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                            parent.layui.table.reload("currentTableId");
+                        }, 1000);
+                    }
                 }else{
                     layer.msg(res.msg, {icon: 2});
                 }
+            },
+            error: function(xhr, status, error) {
+                layer.close(loadIndex);
+                console.error('导入错误：', {
+                    status: status,
+                    error: error,
+                    response: xhr.responseText
+                });
+                
+                let errorMsg = '请求失败';
+                try {
+                    // 尝试解析错误响应
+                    const response = JSON.parse(xhr.responseText);
+                    errorMsg = response.msg || response.message || error;
+                } catch (e) {
+                    errorMsg = xhr.responseText || error;
+                }
+                
+                layer.msg('导入失败：' + errorMsg, {
+                    icon: 2,
+                    time: 0,  // 不自动关闭
+                    btn: ['确定']
+                });
             }
         });
     });
