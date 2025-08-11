@@ -17,6 +17,16 @@ define(["jquery", "easy-admin"], function ($, ea) {
         index: function () {
             ea.table.render({
                 init: init,
+                toolbar: ['refresh', 'add', [{
+                    text: '导入开奖',
+                    url: 'bssj.twbg/import',
+                    method: 'open',
+                    auth: 'import',
+                    class: 'layui-btn layui-btn-normal layui-btn-sm',
+                    icon: 'fa fa-upload',
+                    width: '800px',
+                    height: '600px',
+                }], 'delete', 'export'],
                 cols: [[
                     {type: 'checkbox'},
                     {field: 'issueid', title: '开奖期号'},
