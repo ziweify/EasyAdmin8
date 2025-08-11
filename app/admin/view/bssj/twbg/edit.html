@@ -1,0 +1,76 @@
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form layuimini-form">
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">开奖期号</label>
+            <div class="layui-input-block">
+                <input type="text" name="issueid" class="layui-input" lay-verify="required" placeholder="请输入开奖期号" value="{$row.issueid|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开奖数据,字符串格式</label>
+            <div class="layui-input-block">
+                <input type="text" name="open_data" class="layui-input" lay-verify="required" placeholder="请输入开奖数据,字符串格式" value="{$row.open_data|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">P1</label>
+            <div class="layui-input-block">
+                <input type="text" name="p1" class="layui-input"  placeholder="请输入P1" value="{$row.p1|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">P1</label>
+            <div class="layui-input-block">
+                <input type="text" name="p2" class="layui-input"  placeholder="请输入P1" value="{$row.p2|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">P1</label>
+            <div class="layui-input-block">
+                <input type="text" name="p3" class="layui-input"  placeholder="请输入P1" value="{$row.p3|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">P1</label>
+            <div class="layui-input-block">
+                <input type="text" name="p4" class="layui-input"  placeholder="请输入P1" value="{$row.p4|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">P1</label>
+            <div class="layui-input-block">
+                <input type="text" name="p5" class="layui-input"  placeholder="请输入P1" value="{$row.p5|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea name="remark" class="layui-textarea"  placeholder="请输入备注">{$row.remark|raw|default=''}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态(1:未使用,2:已使用)</label>
+            <div class="layui-input-block">
+                <input type="text" name="status" class="layui-input"  placeholder="请输入状态(1:未使用,2:已使用)" value="{$row.status|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" class="layui-input" lay-affix="number"  placeholder="请输入排序" value="{$row.sort|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开奖时间, 标准开奖时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="open_time" class="layui-input"  placeholder="请输入开奖时间, 标准开奖时间" value="{$row.open_time|default=''}">
+            </div>
+        </div>
+        <div class="hr-line"></div>
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+    </form>
+</div>

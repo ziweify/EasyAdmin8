@@ -49,8 +49,8 @@ INSERT INTO `ea_gdds_user`
 VALUES ('1', 'ds1000', 'Aaa111', '1.2.35', '', '', '', '', '1', '1', '1', '1', '0', '0', '1754402703', '1754519252');
 
 --- 百胜-开奖-宾果数据表
-DROP TABLE IF EXISTS `ea_bs_lottery_twbg`;
-CREATE TABLE `ea_bs_lottery_twbg` (
+DROP TABLE IF EXISTS `ea_bssj_twbg`;
+CREATE TABLE `ea_bssj_twbg` (
     `issueid` bigint(20) NOT NULL COMMENT '开奖期号',
     `open_data` varchar(255) NOT NULL COMMENT '用户名',
     `p1` int(11) DEFAULT '0' COMMENT 'p1',
@@ -68,7 +68,7 @@ CREATE TABLE `ea_bs_lottery_twbg` (
     UNIQUE KEY `username` (`username`) USING BTREE
 ) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT COMMENT='开奖数据表-宾果';
 -- ----------------------------
--- Records of ea_bs_lottery_twbg -数据添加到下面
+-- Records of ea_bssj_twbg -数据添加到下面
 -- ----------------------------
 
 
