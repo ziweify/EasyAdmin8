@@ -129,4 +129,12 @@ class Gdds
         
         return json($systemData);
     }
+
+    // http://172.28.35.182:8850/api/gdds/getBslotteryTwbg?issueid=1
+    public function getBslotteryTwbg()
+    {
+        $bslotteryTwbg = new \app\admin\model\BslotteryTwbg();
+        $result = $bslotteryTwbg->getBslotteryTwbg();
+        return json($result);
+    }
 } 
