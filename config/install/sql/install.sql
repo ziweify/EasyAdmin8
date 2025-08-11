@@ -48,6 +48,30 @@ CREATE TABLE `ea_gdds_user` (
 INSERT INTO `ea_gdds_user`
 VALUES ('1', 'ds1000', 'Aaa111', '1.2.35', '', '', '', '', '1', '1', '1', '1', '0', '0', '1754402703', '1754519252');
 
+--- 百胜-开奖-宾果数据表
+DROP TABLE IF EXISTS `ea_bs_lottery_twbg`;
+CREATE TABLE `ea_bs_lottery_twbg` (
+    `issueid` bigint(20) NOT NULL COMMENT '开奖期号',
+    `open_data` varchar(255) NOT NULL COMMENT '用户名',
+    `p1` int(11) DEFAULT '0' COMMENT 'p1',
+    `p2` int(11) DEFAULT '0' COMMENT 'p2',
+    `p3` int(11) DEFAULT '0' COMMENT 'p3',
+    `p4` int(11) DEFAULT '0' COMMENT 'p4',
+    `p5` int(11) DEFAULT '0' COMMENT 'p5',
+    `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+    `status`      tinyint(1) unsigned DEFAULT '1' COMMENT '状态(1:禁用,2:启用)',
+    `sort` int(11) DEFAULT '0' COMMENT '排序',
+    `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
+    `update_time` int(11) DEFAULT NULL COMMENT '更新时间',
+    `delete_time` int(11) DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `username` (`username`) USING BTREE
+) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT COMMENT='开奖数据表-宾果';
+-- ----------------------------
+-- Records of ea_bs_lottery_twbg -数据添加到下面
+-- ----------------------------
+
+
 -- ----------------------------
 -- Table structure for ea_mall_cate
 -- ----------------------------
