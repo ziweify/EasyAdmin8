@@ -54,8 +54,8 @@ layui.use(['form', 'table', 'layer', 'util'], function () {
             {field: 'p3', title: 'P3', width: 80},
             {field: 'p4', title: 'P4', width: 80},
             {field: 'p5', title: 'P5', width: 80},
-            {field: 'open_time', title: '开奖时间', width: 180, templet: function(d){
-                return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm:ss') : '';
+            {field: 'open_time', title: '开奖时间', width: 160, templet: function(d){
+                return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm') : '';
             }},
             {field: 'import_status', title: '导入状态', width: 120, templet: function(d){
                 if(!d.import_status) return '';

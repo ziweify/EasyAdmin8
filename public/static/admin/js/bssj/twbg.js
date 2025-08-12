@@ -43,8 +43,12 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'remark', title: '备注', templet: ea.table.text},
                     {field: 'status', title: '状态(1:未使用,2:已使用)'},
                     {field: 'sort', title: '排序', edit: 'text'},
-                    {field: 'open_time', title: '开奖时间, 标准开奖时间'},
-                    {field: 'create_time', title: '创建时间,采集到的时间'},
+                    {field: 'open_time', title: '开奖时间', width: 160, templet: function(d){
+                        return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                    }},
+                    {field: 'create_time', title: '创建时间', width: 160, templet: function(d){
+                        return d.create_time ? layui.util.toDateString(d.create_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                    }},
                     {width: 250, title: '操作', templet: ea.table.tool},
                 ]],
             });
@@ -96,8 +100,12 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'remark', title: '备注', templet: ea.table.text},
                     {field: 'status', title: '状态(1:未使用,2:已使用)'},
                     {field: 'sort', title: '排序', edit: 'text'},
-                    {field: 'open_time', title: '开奖时间, 标准开奖时间'},
-                    {field: 'create_time', title: '创建时间,采集到的时间'},
+                    {field: 'open_time', title: '开奖时间', width: 160, templet: function(d){
+                        return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                    }},
+                    {field: 'create_time', title: '创建时间', width: 160, templet: function(d){
+                        return d.create_time ? layui.util.toDateString(d.create_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                    }},
                     {
                         width: 250,
                         title: '操作',
