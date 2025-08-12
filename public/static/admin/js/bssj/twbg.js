@@ -33,8 +33,8 @@ define(["jquery", "easy-admin"], function ($, ea) {
                 }], 'delete', 'export'],
                 cols: [[
                     {type: 'checkbox'},
-                    {field: 'issueid', title: '开奖期号'},
-                    {field: 'open_data', title: '开奖数据,字符串格式'},
+                    {field: 'issueid', title: '开奖期号', width: 120},
+                    {field: 'open_data', title: '开奖数据', width: 180},
                     {field: 'p1', title: 'P1'},
                     {field: 'p2', title: 'P1'},
                     {field: 'p3', title: 'P1'},
@@ -44,10 +44,18 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'status', title: '状态(1:未使用,2:已使用)'},
                     {field: 'sort', title: '排序', edit: 'text'},
                     {field: 'open_time', title: '开奖时间', width: 160, templet: function(d){
-                        return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                        if (!d.open_time || d.open_time == 0) return '';
+                        // 开奖时间是时间戳格式
+                        return layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm');
                     }},
                     {field: 'create_time', title: '创建时间', width: 160, templet: function(d){
-                        return d.create_time ? layui.util.toDateString(d.create_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                        if (!d.create_time) return '';
+                        // 如果是时间戳格式
+                        if (typeof d.create_time === 'number' || /^\d+$/.test(d.create_time)) {
+                            return layui.util.toDateString(d.create_time * 1000, 'yyyy-MM-dd HH:mm');
+                        }
+                        // 如果是字符串格式，直接截取前16位（yyyy-MM-dd HH:mm）
+                        return d.create_time.substring(0, 16);
                     }},
                     {width: 250, title: '操作', templet: ea.table.tool},
                 ]],
@@ -90,8 +98,8 @@ define(["jquery", "easy-admin"], function ($, ea) {
                 ],
                 cols: [[
                     {type: 'checkbox'},
-                    {field: 'issueid', title: '开奖期号'},
-                    {field: 'open_data', title: '开奖数据,字符串格式'},
+                    {field: 'issueid', title: '开奖期号', width: 120},
+                    {field: 'open_data', title: '开奖数据', width: 180},
                     {field: 'p1', title: 'P1'},
                     {field: 'p2', title: 'P1'},
                     {field: 'p3', title: 'P1'},
@@ -101,10 +109,18 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {field: 'status', title: '状态(1:未使用,2:已使用)'},
                     {field: 'sort', title: '排序', edit: 'text'},
                     {field: 'open_time', title: '开奖时间', width: 160, templet: function(d){
-                        return d.open_time ? layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                        if (!d.open_time || d.open_time == 0) return '';
+                        // 开奖时间是时间戳格式
+                        return layui.util.toDateString(d.open_time * 1000, 'yyyy-MM-dd HH:mm');
                     }},
                     {field: 'create_time', title: '创建时间', width: 160, templet: function(d){
-                        return d.create_time ? layui.util.toDateString(d.create_time * 1000, 'yyyy-MM-dd HH:mm') : '';
+                        if (!d.create_time) return '';
+                        // 如果是时间戳格式
+                        if (typeof d.create_time === 'number' || /^\d+$/.test(d.create_time)) {
+                            return layui.util.toDateString(d.create_time * 1000, 'yyyy-MM-dd HH:mm');
+                        }
+                        // 如果是字符串格式，直接截取前16位（yyyy-MM-dd HH:mm）
+                        return d.create_time.substring(0, 16);
                     }},
                     {
                         width: 250,

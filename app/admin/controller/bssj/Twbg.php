@@ -136,8 +136,7 @@ class Twbg extends AdminController
                                         'p3' => $item['p3'],
                                         'p4' => $item['p4'],
                                         'p5' => $item['p5'],
-                                        'open_time' => $item['open_time'],
-                                        'update_time' => $now
+                                        'open_time' => $item['open_time']
                                     ]);
                                     $result['status'] = 'success';
                                     $result['error_msg'] = '更新成功';
@@ -152,9 +151,7 @@ class Twbg extends AdminController
                                         'p3' => $item['p3'],
                                         'p4' => $item['p4'],
                                         'p5' => $item['p5'],
-                                        'open_time' => $item['open_time'],
-                                        'create_time' => $now,
-                                        'update_time' => $now
+                                        'open_time' => $item['open_time']
                                     ];
                                     $result['status'] = 'success';
                                     $result['error_msg'] = '新增成功';
