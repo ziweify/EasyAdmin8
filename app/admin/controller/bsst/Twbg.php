@@ -1,6 +1,6 @@
 <?php
 
-namespace app\admin\controller\bssj;
+namespace app\admin\controller\bsst;
 
 use app\common\controller\AdminController;
 use app\admin\service\annotation\ControllerAnnotation;
@@ -11,7 +11,7 @@ use think\facade\Log;
 use think\facade\Db;
 use think\db\exception\PDOException;
 
-#[ControllerAnnotation(title: 'bssj_twbg')]
+#[ControllerAnnotation(title: 'bsst_twbg')]
 class Twbg extends AdminController
 {
 
@@ -20,7 +20,7 @@ class Twbg extends AdminController
     public function __construct(App $app)
     {
         parent::__construct($app);
-        self::$model = new \app\admin\model\BssjTwbg();
+        self::$model = new \app\admin\model\BsstTwbg();
         $notes = self::$model::$notes;
         
         // 修改排序字段为 issueid

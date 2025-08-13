@@ -1,0 +1,16 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <table id="currentTable" class="layui-table layui-hide"
+               data-auth-add="{:auth('bsst.recharge_card/add')}"
+               data-auth-edit="{:auth('bsst.recharge_card/edit')}"
+               data-auth-delete="{:auth('bsst.recharge_card/delete')}"
+               data-auth-recycle="{:auth('bsst.recharge_card/recycle')}"
+               lay-filter="currentTable">
+               <!-- searchTableShow="false" 隐藏搜索框 -->
+        </table>
+    </div>
+</div>
+
+<script>
+    let notes = JSON.parse('{$notes|json_encode=256|raw}');
+</script>

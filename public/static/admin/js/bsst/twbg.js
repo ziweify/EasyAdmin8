@@ -3,13 +3,13 @@ define(["jquery", "easy-admin"], function ($, ea) {
     var init = {
         table_elem: '#currentTable',
         table_render_id: 'currentTableRenderId',
-        index_url: 'bssj.twbg/index',
-        add_url: 'bssj.twbg/add',
-        edit_url: 'bssj.twbg/edit',
-        delete_url: 'bssj.twbg/delete',
-        export_url: 'bssj.twbg/export',
-        modify_url: 'bssj.twbg/modify',
-        recycle_url: 'bssj.twbg/recycle',
+        index_url: 'bsst.twbg/index',
+        add_url: 'bsst.twbg/add',
+        edit_url: 'bsst.twbg/edit',
+        delete_url: 'bsst.twbg/delete',
+        export_url: 'bsst.twbg/export',
+        modify_url: 'bsst.twbg/modify',
+        recycle_url: 'bsst.twbg/recycle',
     };
 
     return {
@@ -23,7 +23,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                 init: init,
                 toolbar: ['refresh', 'add', [{
                     text: '导入开奖',
-                    url: 'bssj.twbg/import',
+                    url: 'bsst.twbg/import',
                     method: 'open',
                     auth: 'import',
                     class: 'layui-btn layui-btn-normal layui-btn-sm',
