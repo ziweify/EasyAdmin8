@@ -1,0 +1,82 @@
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form layuimini-form">
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">软件名</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" class="layui-input" lay-verify="required" placeholder="请输入软件名" value="{$row.name|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">软件版本，服务器版本, 如果客户端版本不对可以强制更新</label>
+            <div class="layui-input-block">
+                <input type="text" name="soft_version" class="layui-input" lay-verify="required" placeholder="请输入软件版本，服务器版本, 如果客户端版本不对可以强制更新" value="{$row.soft_version|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">json格式,客户端自行解析</label>
+            <div class="layui-input-block">
+                <input type="text" name="config" class="layui-input"  placeholder="请输入json格式,客户端自行解析" value="{$row.config|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API公钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="api_public_key" class="layui-input" lay-verify="required" placeholder="请输入API公钥" value="{$row.api_public_key|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API私钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="api_private_key" class="layui-input" lay-verify="required" placeholder="请输入API私钥" value="{$row.api_private_key|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">API令牌</label>
+            <div class="layui-input-block">
+                <input type="text" name="api_token" class="layui-input" lay-verify="required" placeholder="请输入API令牌" value="{$row.api_token|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea name="remark" class="layui-textarea"  placeholder="请输入备注">{$row.remark|raw|default=''}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">日卡点数</label>
+            <div class="layui-input-block">
+                <input type="text" name="day_price" class="layui-input"  placeholder="请输入日卡点数" value="{$row.day_price|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">周卡点数</label>
+            <div class="layui-input-block">
+                <input type="text" name="week_price" class="layui-input"  placeholder="请输入周卡点数" value="{$row.week_price|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">月卡点数</label>
+            <div class="layui-input-block">
+                <input type="text" name="moon_price" class="layui-input"  placeholder="请输入月卡点数" value="{$row.moon_price|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态(1:禁用,2:启用)</label>
+            <div class="layui-input-block">
+                <input type="text" name="status" class="layui-input"  placeholder="请输入状态(1:禁用,2:启用)" value="{$row.status|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" name="sort" class="layui-input" lay-affix="number"  placeholder="请输入排序" value="{$row.sort|default=''}">
+            </div>
+        </div>
+        <div class="hr-line"></div>
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+    </form>
+</div>

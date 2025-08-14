@@ -1,5 +1,12 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h3>跟单大师充值卡管理</h3>
+                <p class="layui-text">当前显示：跟单大师系统的充值卡数据</p>
+            </div>
+        </div>
+        
         <table id="currentTable" class="layui-table layui-hide"
                data-auth-add="{:auth('bsst.recharge_card/add')}"
                data-auth-edit="{:auth('bsst.recharge_card/edit')}"
@@ -14,6 +21,6 @@
 <script>
     let notes = JSON.parse('{$notes|json_encode=256|raw}');
     require(['bsst/recharge_card'], function (Table) {
-        Table.index();
+        Table.indexGdds();
     });
-</script>
+</script> 

@@ -23,7 +23,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label required">数量</label>
             <div class="layui-input-block">
-                <input type="number" name="quantity" class="layui-input" lay-verify="required" lay-reqtext="请输入数量" placeholder="请输入创建数量" value="1" min="1" max="100">
+                <input type="number" name="quantity" class="layui-input" lay-verify="required" lay-reqtext="请输入数量" placeholder="请输入创建数量" value="100" min="1" max="1000">
+                <div class="layui-form-mid layui-word-aux">最多可创建1000张卡</div>
             </div>
         </div>
 
@@ -45,13 +46,6 @@
             </div>
         </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">批次号</label>
-            <div class="layui-input-block">
-                <input type="text" name="batch_no" class="layui-input" placeholder="可选，留空将自动生成">
-            </div>
-        </div>
-
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">备注</label>
             <div class="layui-input-block">
@@ -59,11 +53,19 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <div class="layui-form-mid layui-word-aux">
+                    <i class="fa fa-info-circle"></i> 批量创建将自动生成批次号，所有卡片将使用相同的批次号便于管理
+                </div>
+            </div>
+        </div>
+
         <div class="hr-line"></div>
         <div class="layui-form-item text-center">
-            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认创建</button>
             <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
         </div>
 
     </form>
-</div>
+</div> 
