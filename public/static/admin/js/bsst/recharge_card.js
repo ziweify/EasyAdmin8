@@ -31,7 +31,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {type: 'checkbox'},
                     {field: 'card_no', title: '充值卡号', width: 180},
                     {field: 'card_type', title: '卡类型', width: 100, templet: function(d){
-                        var types = {1: '普通卡', 2: 'VIP卡', 3: '活动卡'};
+                        var types = {1: '普通卡', 2: '大客户卡', 3: '活动卡'};
                         return types[d.card_type] || '未知';
                     }},
                     {field: 'amount', title: '金额', width: 100},
@@ -87,7 +87,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {type: 'checkbox'},
                     {field: 'card_no', title: '充值卡号', width: 180},
                     {field: 'card_type', title: '卡类型', width: 100, templet: function(d){
-                        var types = {1: '普通卡', 2: 'VIP卡', 3: '活动卡'};
+                        var types = {1: '普通卡', 2: '大客户卡', 3: '活动卡'};
                         return types[d.card_type] || '未知';
                     }},
                     {field: 'amount', title: '金额', width: 100},
@@ -164,7 +164,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                     {type: 'checkbox'},
                     {field: 'card_no', title: '充值卡号', width: 180},
                     {field: 'card_type', title: '卡类型', width: 100, templet: function(d){
-                        var types = {1: '普通卡', 2: 'VIP卡', 3: '活动卡'};
+                        var types = {1: '普通卡', 2: '大客户卡', 3: '活动卡'};
                         return types[d.card_type] || '未知';
                     }},
                     {field: 'amount', title: '金额', width: 100},

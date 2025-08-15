@@ -2,7 +2,7 @@
 CREATE TABLE `ea8_bsst_recharge_card` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `card_no` varchar(32) NOT NULL COMMENT '充值卡号',
-  `card_type` tinyint(1) DEFAULT '1' COMMENT '卡类型(1:普通卡,2:VIP卡,3:活动卡)',
+  `card_type` tinyint(1) DEFAULT '1' COMMENT '卡类型(1:普通卡,2:大客户卡,3:活动卡)',
   `amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '充值金额',
   `original_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '原始金额',
   `status` tinyint(1) DEFAULT '1' COMMENT '状态(1:未使用,2:已使用,3:已过期,4:已作废)',

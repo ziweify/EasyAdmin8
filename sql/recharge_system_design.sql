@@ -7,7 +7,7 @@
 CREATE TABLE `ea8_recharge_card` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `card_no` varchar(32) NOT NULL COMMENT '充值卡号（唯一）',
-  `card_type` tinyint(1) DEFAULT '1' COMMENT '卡类型：1普通卡，2VIP卡，3活动卡',
+  `card_type` tinyint(1) DEFAULT '1' COMMENT '卡类型：1普通卡，2大客户卡，3活动卡',
   `amount` decimal(10,2) NOT NULL COMMENT '充值金额',
   `original_amount` decimal(10,2) NOT NULL COMMENT '原始金额（用于活动卡）',
   `status` tinyint(1) DEFAULT '1' COMMENT '状态：1未使用，2已使用，3已过期，4已作废',

@@ -69,7 +69,7 @@ class BsstRechargeCard extends TimeModel
         ],
         'card_type' => [
             1 => '普通卡',
-            2 => 'VIP卡',
+            2 => '大客户卡',
             3 => '活动卡'
         ]
     ];
