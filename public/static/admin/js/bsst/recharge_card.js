@@ -75,7 +75,7 @@ define(["jquery", "easy-admin"], function ($, ea) {
                 },
                 toolbar: ['refresh', 'add', [{
                     text: '批量创建',
-                    url: 'bsst.recharge_card/batchCreate',
+                    url: 'bsst.recharge_card/batchCreateGdds',
                     method: 'open',
                     auth: 'batchCreate',
                     class: 'layui-btn layui-btn-warm layui-btn-sm',

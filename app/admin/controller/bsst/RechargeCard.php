@@ -209,6 +209,48 @@ class RechargeCard extends AdminController
     }
 
     /**
+     * 跟单大师批量创建充值卡
+     */
+    #[NodeAnnotation(title: '跟单大师批量创建', auth: true)]
+    public function batchCreateGdds(Request $request): string
+    {
+        if ($request->isPost()) {
+            $post = $request->post();
+            $rule = [
+                'amount' => 'require|number|gt:0',
+                'quantity' => 'require|number|gt:0|elt:1000',
+            ];
+            $this->validate($post, $rule);
+            
+            try {
+                Db::transaction(function() use ($post) {
+                    $batchNo = 'GDDS_BATCH_' . date('YmdHis') . '_' . mt_rand(1000, 9999);
+                    $expireTime = $post['expire_days'] > 0 ? time() + ($post['expire_days'] * 86400) : 0;
+                    
+                    for ($i = 0; $i < $post['quantity']; $i++) {
+                        self::$model::create([
+                            'card_no' => self::$model::generateCardNo(),
+                            'card_type' => $post['card_type'] ?? 1,
+                            'amount' => $post['amount'],
+                            'original_amount' => $post['amount'],
+                            'status' => self::$model::STATUS_UNUSED,
+                            'batch_no' => $batchNo,
+                            'expire_time' => $expireTime,
+                            'soft_name' => '跟单大师', // 固定为跟单大师
+                            'creator_id' => $this->adminUid,
+                            'remark' => $post['remark'] ?? ''
+                        ]);
+                    }
+                });
+                $this->success('跟单大师充值卡批量创建成功');
+            } catch (\Exception $e) {
+                $this->error('批量创建失败：' . $e->getMessage());
+            }
+        }
+        return $this->fetch('batch_create_gdds');
+    }
+
+    /**
      * 导出充值卡
      */
     #[NodeAnnotation(title: '导出充值卡', auth: true)]
