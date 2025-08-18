@@ -217,8 +217,11 @@ class RechargeCard extends AdminController
         if ($request->isPost()) {
             $post = $request->post();
             $rule = [
-                'amount' => 'require|number|gt:0',
-                'quantity' => 'require|number|gt:0|elt:1000',
+                'card_type' => 'require|number|in:1,2,3',
+                'recharge_type' => 'require|number|in:1,2,3',
+                'settle_status' => 'require|number|in:0,1',
+                'count' => 'require|number|gt:0|elt:1000',
+                'quantity' => 'require|number|gt:0|elt:100',
             ];
             $this->validate($post, $rule);
             
@@ -230,9 +233,10 @@ class RechargeCard extends AdminController
                     for ($i = 0; $i < $post['quantity']; $i++) {
                         self::$model::create([
                             'card_no' => self::$model::generateCardNo(),
-                            'card_type' => $post['card_type'] ?? 1,
-                            'amount' => $post['amount'],
-                            'original_amount' => $post['amount'],
+                            'card_type' => $post['card_type'],
+                            'recharge_type' => $post['recharge_type'],
+                            'settle_status' => $post['settle_status'],
+                            'count' => $post['count'],
                             'status' => self::$model::STATUS_UNUSED,
                             'batch_no' => $batchNo,
                             'expire_time' => $expireTime,

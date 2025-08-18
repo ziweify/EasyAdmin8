@@ -71,6 +71,15 @@ class BsstRechargeCard extends TimeModel
             1 => '普通卡',
             2 => '大客户卡',
             3 => '活动卡'
+        ],
+        'recharge_type' => [
+            1 => '日卡',
+            2 => '周卡',
+            3 => '月卡'
+        ],
+        'settle_status' => [
+            0 => '挂账',
+            1 => '已结'
         ]
     ];
 }
