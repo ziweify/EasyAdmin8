@@ -133,6 +133,10 @@ define(["jquery", "easy-admin"], function ($, ea) {
             ea.listen();
         },
 
+        batchCreateGdds: function () {
+            ea.listen();
+        },
+
         recycle: function () {
             init.index_url = init.recycle_url;
             ea.table.render({

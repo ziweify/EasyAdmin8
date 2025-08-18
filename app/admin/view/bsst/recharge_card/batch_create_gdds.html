@@ -16,7 +16,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label required">充值类型</label>
             <div class="layui-input-block">
-                <select name="recharge_type" lay-verify="required" lay-reqtext="请选择卡类型" lay-search>
+                <select name="recharge_type" lay-verify="required" lay-reqtext="请选择充值类型" lay-search>
                     <option value="">请选择充值类型</option>
                     <option value="1">日卡</option>
                     <option value="2">周卡</option>
@@ -27,15 +27,16 @@
 
         <div class="layui-form-item">
             <label class="layui-form-label required">结算状态</label>
-            <input type="radio" name="settle_status" value="0" lay-filter="demo-radio-filter" title="挂账" checked="true"> 
-            <input type="radio" name="settle_status" value="1" lay-filter="demo-radio-filter" title="已结"> 
+            <div class="layui-input-block">
+                <input type="radio" name="settle_status" value="0" title="挂账" checked>
+                <input type="radio" name="settle_status" value="1" title="已结">
+            </div>
         </div>
-
 
         <div class="layui-form-item">
             <label class="layui-form-label required">使用次数</label>
             <div class="layui-input-block">
-                <input type="number" name="count" class="layui-input" lay-verify="required" lay-reqtext="请输入数量" placeholder="请输入创建数量" value="1" min="1" max="100">
+                <input type="number" name="count" class="layui-input" lay-verify="required" lay-reqtext="请输入使用次数" placeholder="请输入使用次数" value="1" min="1" max="1000">
                 <div class="layui-form-mid layui-word-aux">普通卡次数是1次,大客户卡和活动卡是多次,1-1000</div>
             </div>
         </div>

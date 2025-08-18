@@ -227,20 +227,51 @@ class RechargeCard extends AdminController
             
             try {
                 Db::transaction(function() use ($post) {
-                    $batchNo = 'GDDS_BATCH_' . date('YmdHis') . '_' . mt_rand(1000, 9999);
                     $expireTime = $post['expire_days'] > 0 ? time() + ($post['expire_days'] * 86400) : 0;
+                    $subCard = 0;    //默认是主卡
+
+                    // 生成24位卡号前缀
+                    $cardTypePrefix = match((int)$post['card_type']) {
+                        1 => 'P', // 普通卡
+                        2 => 'V', // 大客户卡 
+                        3 => 'H', // 活动卡
+                    };
+
+                    
+                    $rechargeTypePrefix = match((int)$post['recharge_type']) {
+                        1 => 'D', // 日卡
+                        2 => 'W', // 周卡
+                        3 => 'M', // 月卡
+                    };
+
+                  
+                    
+                    $countPrefix = match((int)$post['count']) {
+                        1 => 'A',
+                        2 => 'B', 
+                        3 => 'C',
+                        default => 'X'
+                    };
+                    
+                    $batchNo = 'GDDS_BATCH_' . date('YmdHis') . '_' . mt_rand(1000, 9999);
                     
                     for ($i = 0; $i < $post['quantity']; $i++) {
+                        // 生成21位随机字符串
+                        $randomStr = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 21));
+                        // 组合24位卡号
+                        $cardNo = $cardTypePrefix . $rechargeTypePrefix . $countPrefix . $randomStr;
+                        
                         self::$model::create([
-                            'card_no' => self::$model::generateCardNo(),
+                            'card_no' => $cardNo,
+                            'batch_no' => $batchNo,
+                            'soft_name' => '跟单大师', // 固定为跟单大师
                             'card_type' => $post['card_type'],
                             'recharge_type' => $post['recharge_type'],
                             'settle_status' => $post['settle_status'],
                             'count' => $post['count'],
                             'status' => self::$model::STATUS_UNUSED,
-                            'batch_no' => $batchNo,
+                            'sub_card' => $subCard,
                             'expire_time' => $expireTime,
-                            'soft_name' => '跟单大师', // 固定为跟单大师
                             'creator_id' => $this->adminUid,
                             'remark' => $post['remark'] ?? ''
                         ]);
