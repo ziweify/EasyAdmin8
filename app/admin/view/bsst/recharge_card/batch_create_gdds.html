@@ -14,17 +14,37 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label required">卡类型</label>
+            <label class="layui-form-label required">充值类型</label>
             <div class="layui-input-block">
-                <input type="number" name="amount" class="layui-input" lay-verify="required" lay-reqtext="请输入金额" placeholder="请输入充值金额" value="">
+                <select name="recharge_type" lay-verify="required" lay-reqtext="请选择卡类型" lay-search>
+                    <option value="">请选择充值类型</option>
+                    <option value="1">日卡</option>
+                    <option value="2">周卡</option>
+                    <option value="3">月卡</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">结算状态</label>
+            <input type="radio" name="settle_status" value="0" lay-filter="demo-radio-filter" title="挂账" checked="true"> 
+            <input type="radio" name="settle_status" value="1" lay-filter="demo-radio-filter" title="已结"> 
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">使用次数</label>
+            <div class="layui-input-block">
+                <input type="number" name="count" class="layui-input" lay-verify="required" lay-reqtext="请输入数量" placeholder="请输入创建数量" value="1" min="1" max="100">
+                <div class="layui-form-mid layui-word-aux">普通卡次数是1次,大客户卡和活动卡是多次,1-1000</div>
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label required">数量</label>
             <div class="layui-input-block">
-                <input type="number" name="quantity" class="layui-input" lay-verify="required" lay-reqtext="请输入数量" placeholder="请输入创建数量" value="100" min="1" max="1000">
-                <div class="layui-form-mid layui-word-aux">最多可创建1000张卡</div>
+                <input type="number" name="quantity" class="layui-input" lay-verify="required" lay-reqtext="请输入数量" placeholder="请输入创建数量" value="100" min="1" max="100">
+                <div class="layui-form-mid layui-word-aux">最多可创建100张卡</div>
             </div>
         </div>
 
@@ -32,6 +52,7 @@
             <label class="layui-form-label">过期天数</label>
             <div class="layui-input-block">
                 <input type="number" name="expire_days" class="layui-input" placeholder="0表示永久有效" value="0" min="0">
+                <div class="layui-form-mid layui-word-aux">0代表永久有效</div>
             </div>
         </div>
 
