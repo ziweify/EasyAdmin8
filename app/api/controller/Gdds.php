@@ -32,41 +32,36 @@ class Gdds
     //http://172.28.35.182:8850/api/gdds/login?name=ds1000&pwd=Aaa111
     public function login()
     {
-        // 获取请求参数
-        $name = input('name');
-        $pwd = input('pwd');
+        try {
+            // 获取POST数据
+            $raw_post = file_get_contents('php://input');
+            parse_str($raw_post, $post_data);
+            
+            $name = $post_data['name'] ?? '';
+            $pwd = $post_data['pwd'] ?? '';
 
-        if (empty($name) || empty($pwd)) {
-            return json([
-                'code' => 400,
-                'message' => '用户名和密码不能为空'
-            ]);
-        }
+            if (empty($name) || empty($pwd)) {
+                return json(['code' => 400, 'message' => '用户名和密码不能为空']);
+            }
 
-        // 使用模型处理登录逻辑
-        $userModel = new \app\admin\model\GddsUser();
-        $result = $userModel->login($name, $pwd);
-
-        if (!$result['success']) {
-            return json([
+            // 处理登录
+            $result = (new \app\admin\model\GddsUser())->login($name, $pwd);
+            
+            return json($result['success'] ? [
+                'code' => 200,
+                'message' => '登录成功',
+                'data' => $result['data']
+            ] : [
                 'code' => 401,
                 'message' => $result['message']
             ]);
+        } catch (\Exception $e) {
+            \think\facade\Log::error('Login error: ' . $e->getMessage());
+            return json([
+                'code' => 500,
+                'message' => $e->getMessage()
+            ]);
         }
-
-        return json([
-            'code' => 200,
-            'message' => '登录成功',
-            'data' => [
-                'user_id' => $result['data']['user_id'],
-                'name' => $result['data']['name'],
-                'api_token' => $result['data']['api_token'],
-                'api_public_key' => $result['data']['api_public_key']
-            ]
-        ]);
-
-
-
     }
 
 

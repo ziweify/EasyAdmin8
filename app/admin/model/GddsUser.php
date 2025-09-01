@@ -308,9 +308,27 @@ class GddsUser extends TimeModel
 
     public function login($name, $pwd)
     {
-        $user = self::where('name', $name)->find();
-        if (!$user) {
-            return ['success' => false, 'message' => '用户不存在'];
+        try {
+            $user = self::where('username', $name)->find();
+            if (!$user) {
+                return ['success' => false, 'message' => '用户不存在'];
+            }
+
+            if ($user->password !== $pwd) {
+                return ['success' => false, 'message' => '密码错误'];
+            }
+
+            return [
+                'success' => true,
+                'data' => [
+                    'user_id' => $user->id,
+                    'name' => $user->username,
+                    'api_token' => md5($user->id . time() . rand(1000, 9999))
+                ]
+            ];
+        } catch (\Exception $e) {
+            \think\facade\Log::error('Login error in model: ' . $e->getMessage());
+            return ['success' => false, 'message' => '登录过程发生错误'];
         }
     }
 
