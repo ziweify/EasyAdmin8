@@ -5,9 +5,21 @@ namespace app\api\controller;
 use think\Request;
 use think\Response;
 
+/**
+ * 跟单大师API控制器
+ * 应用API统计中间件
+ */
+
 // 跟单大师
 class Gdds
 {
+    /**
+     * 中间件定义
+     */
+    protected $middleware = [
+        'app\common\middleware\ApiStats',
+        'app\common\middleware\ApiAuth' => ['except' => ['login', 'index']]
+    ];
 
     public function index()
     {
@@ -189,5 +201,163 @@ class Gdds
         // 示例使用Redis List实现简单队列
         $redis = cache('redis');
         $redis->lpush('lottery_update_queue', json_encode($task));
+    }
+
+    /**
+     * 获取API调用统计
+     */
+    public function getApiStats()
+    {
+        try {
+            $userId = $this->request->userId ?? 0;
+            $date = input('date', date('Y-m-d'));
+            
+            if (!$userId) {
+                return json(['code' => 401, 'message' => '用户未认证']);
+            }
+
+            // 获取统计数据
+            $stats = \think\facade\Db::name('api_stats')
+                ->where('user_id', $userId)
+                ->where('date', $date)
+                ->select()
+                ->toArray();
+
+            // 计算总计
+            $totalStats = [
+                'total_calls' => array_sum(array_column($stats, 'total_calls')),
+                'success_calls' => array_sum(array_column($stats, 'success_calls')),
+                'failed_calls' => array_sum(array_column($stats, 'failed_calls')),
+                'success_rate' => 0
+            ];
+
+            if ($totalStats['total_calls'] > 0) {
+                $totalStats['success_rate'] = round(
+                    ($totalStats['success_calls'] / $totalStats['total_calls']) * 100, 2
+                );
+            }
+
+            return json([
+                'code' => 200,
+                'message' => 'success',
+                'data' => [
+                    'date' => $date,
+                    'user_id' => $userId,
+                    'total_stats' => $totalStats,
+                    'method_stats' => $stats
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            \think\facade\Log::error('获取API统计失败: ' . $e->getMessage());
+            return json(['code' => 500, 'message' => '获取统计数据失败']);
+        }
+    }
+
+    /**
+     * 获取API调用日志
+     */
+    public function getApiLogs()
+    {
+        try {
+            $userId = $this->request->userId ?? 0;
+            $page = input('page', 1);
+            $limit = input('limit', 20);
+            $date = input('date', date('Y-m-d'));
+            
+            if (!$userId) {
+                return json(['code' => 401, 'message' => '用户未认证']);
+            }
+
+            $where = [
+                ['user_id', '=', $userId],
+                ['create_time', 'between', [
+                    strtotime($date . ' 00:00:00'),
+                    strtotime($date . ' 23:59:59')
+                ]]
+            ];
+
+            $logs = \think\facade\Db::name('api_logs')
+                ->where($where)
+                ->order('create_time desc')
+                ->page($page, $limit)
+                ->select()
+                ->toArray();
+
+            $total = \think\facade\Db::name('api_logs')
+                ->where($where)
+                ->count();
+
+            return json([
+                'code' => 200,
+                'message' => 'success',
+                'data' => [
+                    'logs' => $logs,
+                    'total' => $total,
+                    'page' => $page,
+                    'limit' => $limit
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            \think\facade\Log::error('获取API日志失败: ' . $e->getMessage());
+            return json(['code' => 500, 'message' => '获取日志数据失败']);
+        }
+    }
+
+    /**
+     * 测试API统计功能
+     */
+    public function testApiStats()
+    {
+        try {
+            // 模拟一些处理时间
+            usleep(rand(100000, 500000)); // 0.1-0.5秒随机延时
+            
+            return json([
+                'code' => 200,
+                'message' => 'API统计测试成功',
+                'data' => [
+                    'timestamp' => time(),
+                    'random' => rand(1000, 9999),
+                    'test_info' => '这是一个用于测试API统计功能的接口'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return json([
+                'code' => 500,
+                'message' => 'API统计测试失败: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * 查看所有可用的API接口
+     */
+    public function getApiList()
+    {
+        $apiList = [
+            'index' => '基本测试接口',
+            'test' => '测试方法',
+            'login' => '用户登录接口',
+            'getUser' => '获取用户信息',
+            'getDate' => '获取日期时间',
+            'getSystemInfo' => '获取系统信息',
+            'getBslotteryTwbg' => '获取宾果开奖数据',
+            'getApiStats' => '获取API调用统计',
+            'getApiLogs' => '获取API调用日志',
+            'testApiStats' => '测试API统计功能',
+            'getApiList' => '获取API接口列表'
+        ];
+
+        return json([
+            'code' => 200,
+            'message' => 'success',
+            'data' => [
+                'total_apis' => count($apiList),
+                'api_list' => $apiList,
+                'stats_info' => '所有API都已自动启用统计功能'
+            ]
+        ]);
     }
 } 

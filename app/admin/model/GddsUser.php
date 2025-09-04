@@ -309,21 +309,149 @@ class GddsUser extends TimeModel
     public function login($name, $pwd)
     {
         try {
+            \think\facade\Log::info("开始登录验证: {$name}");
+            
             $user = self::where('username', $name)->find();
             if (!$user) {
+                \think\facade\Log::info("用户不存在: {$name}");
                 return ['success' => false, 'message' => '用户不存在'];
             }
 
             if ($user->password !== $pwd) {
+                \think\facade\Log::info("密码错误: {$name}");
                 return ['success' => false, 'message' => '密码错误'];
             }
+
+            \think\facade\Log::info("密码验证成功，开始生成RSA密钥对: {$name}");
+
+            // 1. 生成RSA密钥对
+            try {
+                $config = [
+                    "digest_alg" => "sha512",
+                    "private_key_bits" => 2048,
+                    "private_key_type" => OPENSSL_KEYTYPE_RSA,
+                ];
+                
+                $res = openssl_pkey_new($config);
+                if (!$res) {
+                    throw new \Exception('生成RSA密钥对失败');
+                }
+                
+                openssl_pkey_export($res, $privateKey);
+                $details = openssl_pkey_get_details($res);
+                $publicKey = str_replace(['-----BEGIN PUBLIC KEY-----', '-----END PUBLIC KEY-----', "\n"], '', $details['key']);
+                \think\facade\Log::info("RSA密钥对生成成功: {$name}");
+            } catch (\Exception $e) {
+                \think\facade\Log::error("RSA密钥对生成失败: " . $e->getMessage());
+                throw $e;
+            }
+             
+            // 2. 记录登录IP和时间
+            $user->last_login_ip = request()->ip();
+            $user->last_login_time = time();
+             
+            // 3. 保存RSA密钥对和生成token
+            $user->api_public_key = $publicKey;
+            $user->api_private_key = $privateKey;
+            $user->api_token = md5($user->id . $privateKey);
+             
+            // 4. 保存用户信息
+            $user->save();
+            \think\facade\Log::info("用户信息保存成功: {$name}");
+             
+            // 5. 记录登录日志到系统日志表
+            try {
+                \think\facade\Db::name('system_log')->insert([
+                    'user_id' => $user->id,
+                    'username' => $user->username,
+                    'action' => 'login',
+                    'module' => 'api',
+                    'controller' => 'gdds',
+                    'method' => 'login',
+                    'ip' => $user->last_login_ip,
+                    'description' => '用户API登录成功',
+                    'user_agent' => request()->header('user-agent') ?: '',
+                    'request_data' => json_encode([
+                        'username' => $name,
+                        'login_time' => date('Y-m-d H:i:s'),
+                        'ip' => $user->last_login_ip
+                    ]),
+                    'response_data' => json_encode([
+                        'success' => true,
+                        'user_id' => $user->id,
+                        'api_token' => substr($user->api_token, 0, 10) . '...' // 只记录token前10位
+                    ]),
+                    'create_time' => time(),
+                    'update_time' => time()
+                ]);
+                \think\facade\Log::info("系统日志记录成功: {$name}");
+            } catch (\Exception $e) {
+                \think\facade\Log::error('记录登录日志失败: ' . $e->getMessage());
+                // 日志记录失败不影响登录
+            }
+            
+            // 6. 存储Redis数据
+            try {
+                $redis = \think\facade\Cache::store('redis');
+                $tokenData = [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'api_private_key' => $privateKey,
+                    'api_public_key' => $publicKey,
+                    'login_time' => time(),
+                    'login_ip' => $user->last_login_ip,
+                    'err' => 0,
+                    'expire_time' => time() + 7200
+                ];
+                $redis->set($user->api_token, json_encode($tokenData), 7200); // 2小时过期
+                
+                // 同时存储用户ID到token的映射，方便根据用户ID查找token
+                $redis->set('user_token:' . $user->id, $user->api_token, 7200);
+                
+                \think\facade\Log::info('Redis数据存储成功: token=' . substr($user->api_token, 0, 10) . '...');
+                
+            } catch (\Exception $e) {
+                \think\facade\Log::error('存储Redis数据失败: ' . $e->getMessage());
+                // Redis失败不影响登录，继续执行
+            }
+            
+            // 7. 初始化或更新API调用统计表
+            try {
+                $today = date('Y-m-d');
+                $apiStats = \think\facade\Db::name('api_stats')
+                    ->where('user_id', $user->id)
+                    ->where('date', $today)
+                    ->where('api_method', 'login')
+                    ->find();
+                
+                if (!$apiStats) {
+                    \think\facade\Db::name('api_stats')->insert([
+                        'user_id' => $user->id,
+                        'date' => $today,
+                        'api_method' => 'login',
+                        'total_calls' => 0,
+                        'success_calls' => 0,
+                        'failed_calls' => 0,
+                        'avg_response_time' => 0.00,
+                        'create_time' => time(),
+                        'update_time' => time()
+                    ]);
+                }
+                \think\facade\Log::info("API统计初始化成功: {$name}");
+            } catch (\Exception $e) {
+                \think\facade\Log::error('初始化API统计失败: ' . $e->getMessage());
+                // 统计初始化失败不影响登录
+            }
+
+            \think\facade\Log::info("登录流程全部完成: {$name}");
 
             return [
                 'success' => true,
                 'data' => [
                     'user_id' => $user->id,
                     'name' => $user->username,
-                    'api_token' => md5($user->id . time() . rand(1000, 9999))
+                    'api_token' => $user->api_token,
+                    'code' => $user->api_public_key
                 ]
             ];
         } catch (\Exception $e) {

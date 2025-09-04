@@ -23,6 +23,26 @@ return [
             // 序列化机制 例如 ['serialize', 'unserialize']
             'serialize'  => [],
         ],
+        'redis' => [
+            // 驱动方式
+            'type'       => 'Redis',
+            // 服务器地址
+            'host'       => '127.0.0.1',
+            // 端口
+            'port'       => 6379,
+            // 密码
+            'password'   => env('REDIS_PASSWORD', ''),
+            // 数据库
+            'select'     => 0,
+            // 缓存前缀
+            'prefix'     => 'EA8_',
+            // 缓存有效期 0表示永久缓存
+            'expire'     => 0,
+            // 超时时间
+            'timeout'    => 0,
+            // 是否序列化
+            'serialize'  => true,
+        ],
         // 更多的缓存连接
     ],
 ];
